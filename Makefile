@@ -1,10 +1,8 @@
-.PHONY: install start build lint fix
-
 install:
 	npm ci
 
 start:
-	npx start-server -s ./build
+	npx start-server -s ./frontend/build
 
 build:
 	npm run build
