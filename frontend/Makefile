@@ -1,13 +1,8 @@
-.PHONY: install start build lint fix
-
 install:
 	npm ci
 
 start:
 	npx start-server -s ./build
-
-build:
-	npm run build
 
 lint:
 	npx eslint .
