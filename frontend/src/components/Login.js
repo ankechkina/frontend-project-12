@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import {
   FormGroup, Label, Input, Button,
 } from 'reactstrap';
+import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useLoginMutation } from '../api/authApi';
@@ -12,6 +13,7 @@ const Login = () => {
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [authError, setAuthError] = useState(false);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
@@ -19,9 +21,8 @@ const Login = () => {
       localStorage.setItem('token', user.token);
       dispatch(setUserData({ token: user.token }));
       navigate('/');
-      console.log('ПОЛУЧИВСЯ ЗАЛОГИНИТЬСЯ!!');
     } catch (err) {
-      console.log('НЕ ПОЛУЧИВСЯ :(');
+      setAuthError(true);
       setSubmitting(false);
     }
   };
@@ -44,7 +45,7 @@ const Login = () => {
                 required
                 placeholder="Ваш ник"
                 id="username"
-                className="form-control"
+                className={classNames('form-control', { 'is-invalid': authError })}
                 as={Input}
               />
             </FormGroup>
@@ -57,9 +58,14 @@ const Login = () => {
                 required
                 placeholder="Пароль"
                 id="password"
-                className="form-control"
+                className={classNames('form-control', { 'is-invalid': authError })}
                 as={Input}
               />
+              {authError && (
+                <div style={{ color: 'red', marginTop: '0.5rem' }}>
+                  Неверные имя пользователя или пароль
+                </div>
+              )}
             </FormGroup>
             <Button type="submit" color="primary" disabled={isSubmitting || isLoading}>
               Войти
