@@ -4,14 +4,17 @@ import {
   Formik, Form, Field, ErrorMessage,
 } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import { loadChannels, loadMessages, logOut } from '../store/authSlice';
+import classNames from 'classnames';
+import {
+  loadChannels, loadMessages, logOut, setCurrentChannel,
+} from '../store/authSlice';
 import { API_ROUTES } from '../utils/router';
 
 const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
-    token, channels, messages,
+    token, channels, messages, currentChannel,
   } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -24,6 +27,10 @@ const Home = () => {
   const handleLogout = () => {
     dispatch(logOut());
     navigate(API_ROUTES.login);
+  };
+
+  const handleChannelClick = (channelName) => {
+    dispatch(setCurrentChannel(channelName));
   };
 
   return (
@@ -48,7 +55,14 @@ const Home = () => {
                 <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
                   {channels.map((channel) => (
                     <li key={channel.id} className="nav-item w-100">
-                      <button type="button" className="w-100 rounded-0 text-start btn btn-secondary">
+                      <button
+                        type="button"
+                        className={classNames(
+                          'w-100 rounded-0 text-start btn',
+                          { 'btn-secondary': channel.name === currentChannel },
+                        )}
+                        onClick={() => handleChannelClick(channel.name)}
+                      >
                         <span className="me-1">#</span>
                         {channel.name}
                       </button>
@@ -59,7 +73,12 @@ const Home = () => {
               <div className="col p-0 h-100">
                 <div className="d-flex flex-column h-100">
                   <div className="bg-light mb-4 p-3 shadow-sm small">
-                    <p className="m-0"><b># general</b></p>
+                    <p className="m-0">
+                      <b>
+                        #
+                        {currentChannel}
+                      </b>
+                    </p>
                     <span className="text-muted">0 сообщений</span>
                   </div>
                   <div id="messages-box" className="chat-messages overflow-auto px-5">

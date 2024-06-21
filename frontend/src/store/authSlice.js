@@ -8,6 +8,7 @@ const initialState = {
   messages: [],
   loading: false,
   error: null,
+  currentChannel: 'general',
 };
 
 export const loadChannels = createAsyncThunk(
@@ -51,6 +52,9 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem('token');
     },
+    setCurrentChannel: (state, action) => {
+      state.currentChannel = action.payload;
+    },
   },
   extraReducers: {
     [loadChannels.pending]: (state) => {
@@ -80,6 +84,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUserData, logOut } = authSlice.actions;
+export const { setUserData, logOut, setCurrentChannel } = authSlice.actions;
 
 export default authSlice.reducer;
