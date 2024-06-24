@@ -43,10 +43,8 @@ const Home = () => {
       <div id="chat" className="h-100">
         <div className="d-flex flex-column chat-page">
           <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-            <div>
-              <a className="navbar-brand" href="/">Hexlet Chat</a>
-              <button onClick={handleLogout} type="button" className="btn btn-primary">Выйти</button>
-            </div>
+            <a className="navbar-brand" href="/">Hexlet Chat</a>
+            <button onClick={handleLogout} type="button" className="btn btn-primary logout-button">Выйти</button>
           </nav>
           <div className="container h-100 my-4 overflow-hidden rounded shadow">
             <div className="row h-100 bg-white flex-md-row">

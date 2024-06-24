@@ -38,3 +38,16 @@ form {
 	height: 100vh;
 	margin-top: -150px;
  }
+
+ .navbar {
+	display: flex;
+	justify-content: space-between;
+ }
+
+ .navbar-brand {
+	margin-left: 30vh;
+ }
+
+ .logout-button {
+	margin-right: 30vh;
+ }
