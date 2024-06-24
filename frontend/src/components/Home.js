@@ -17,7 +17,7 @@ const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
-    token, channels, currentChannel,
+    token, channels, currentChannel, username,
   } = useSelector((state) => state.auth);
 
   const { sendMessage, messages: socketMessages } = useSocket();
@@ -41,7 +41,7 @@ const Home = () => {
   return (
     <div className="h-100">
       <div id="chat" className="h-100">
-        <div className="d-flex flex-column h-100">
+        <div className="d-flex flex-column chat-page">
           <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
             <div>
               <a className="navbar-brand" href="/">Hexlet Chat</a>
@@ -91,7 +91,6 @@ const Home = () => {
                     </span>
                   </div>
                   <div id="messages-box" className="chat-messages overflow-auto px-5">
-                    {console.log('socketMessages:', socketMessages)}
                     {socketMessages.map((message, index) => (
                       <div key={index} className="message">
                         <p>{message.body}</p>
@@ -104,7 +103,7 @@ const Home = () => {
                       initialValues={{ message: '' }}
                       onSubmit={(values, { setSubmitting, resetForm }) => {
                         const channelId = channels.find((channel) => channel.name === currentChannel).id;
-                        sendMessage({ body: values.message, channelId, username: 'YourUsername' }); // Измените на реальное имя пользователя
+                        sendMessage({ body: values.message, channelId, username });
                         setSubmitting(false);
                         resetForm();
                       }}

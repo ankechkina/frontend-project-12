@@ -1,5 +1,4 @@
 .container {
-	display: flex;
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
@@ -15,7 +14,6 @@ form {
 	flex-direction: column;
 	overflow-y: auto;
 	min-height: 100px;
-	background-color: red;
  }
  
  .message {
@@ -23,4 +21,20 @@ form {
 	margin-bottom: 10px;
 	background-color: #f1f1f1;
 	border-radius: 5px;
+ }
+
+ .row {
+	flex-wrap: nowrap !important;
+ }
+
+ .chat-page {
+	height: 100vh;
+ }
+
+ .login-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	margin-top: -150px;
  }

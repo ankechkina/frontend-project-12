@@ -19,8 +19,9 @@ const Login = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const user = await login(values).unwrap();
+      const { username } = values;
+      dispatch(setUserData({ username, token: user.token }));
       localStorage.setItem('token', user.token);
-      dispatch(setUserData({ token: user.token }));
       navigate(ROUTES.home);
     } catch (err) {
       setAuthError(true);
@@ -29,7 +30,7 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
+    <div className="login-container">
       <Formik
         initialValues={{ username: '', password: '' }}
         onSubmit={handleSubmit}

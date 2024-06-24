@@ -4,6 +4,7 @@ import { fetchChannels, fetchMessages } from '../api/api';
 const initialState = {
   token: localStorage.getItem('token') || null,
   isAuthenticated: !!localStorage.getItem('token'),
+  username: null,
   channels: [],
   messages: [],
   loading: false,
@@ -44,12 +45,18 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setUserData: (state, action) => {
-      state.token = action.payload.token;
-      state.isAuthenticated = true;
+      if (action.payload.token) {
+        state.token = action.payload.token;
+        state.isAuthenticated = true;
+      }
+      if (action.payload.username) {
+        state.username = action.payload.username;
+      }
     },
     logOut: (state) => {
       state.token = null;
       state.isAuthenticated = false;
+      state.username = null;
       localStorage.removeItem('token');
     },
     setCurrentChannel: (state, action) => {
