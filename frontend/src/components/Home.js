@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key, max-len */
+
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -9,13 +11,16 @@ import {
   loadChannels, loadMessages, logOut, setCurrentChannel,
 } from '../store/authSlice';
 import { API_ROUTES } from '../utils/router';
+import { useSocket } from '../context/SocketContext';
 
 const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
-    token, channels, messages, currentChannel,
+    token, channels, currentChannel,
   } = useSelector((state) => state.auth);
+
+  const { sendMessage, messages: socketMessages } = useSocket();
 
   useEffect(() => {
     if (token) {
@@ -79,11 +84,16 @@ const Home = () => {
                         {currentChannel}
                       </b>
                     </p>
-                    <span className="text-muted">0 сообщений</span>
+                    <span className="text-muted">
+                      {socketMessages.length}
+                      {' '}
+                      сообщений
+                    </span>
                   </div>
                   <div id="messages-box" className="chat-messages overflow-auto px-5">
-                    {messages.map((message) => (
-                      <div key={message.id} className="message">
+                    {console.log('socketMessages:', socketMessages)}
+                    {socketMessages.map((message, index) => (
+                      <div key={index} className="message">
                         <p>{message.body}</p>
                         <span className="text-muted">{message.username}</span>
                       </div>
@@ -93,7 +103,8 @@ const Home = () => {
                     <Formik
                       initialValues={{ message: '' }}
                       onSubmit={(values, { setSubmitting, resetForm }) => {
-                        console.log('Отправлено сообщение:', values.message);
+                        const channelId = channels.find((channel) => channel.name === currentChannel).id;
+                        sendMessage({ body: values.message, channelId, username: 'YourUsername' }); // Измените на реальное имя пользователя
                         setSubmitting(false);
                         resetForm();
                       }}

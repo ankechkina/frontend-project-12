@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setUserData } from '../store/authSlice';
+import { ROUTES } from '../utils/router';
 
 const AuthLoader = ({ children }) => {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ const AuthLoader = ({ children }) => {
     if (storedToken) {
       dispatch(setUserData({ token: storedToken }));
     } else {
-      navigate('/login');
+      navigate(ROUTES.login);
     }
   }, [dispatch, navigate]);
 

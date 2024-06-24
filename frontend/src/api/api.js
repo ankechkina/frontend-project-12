@@ -32,3 +32,17 @@ export const fetchMessages = async (token) => {
     throw error;
   }
 };
+
+export const addMessage = async (message, token) => {
+  try {
+    const response = await axios.post('/api/v1/messages', message, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Ошибка при отправке сообщения:', error);
+    throw error;
+  }
+};

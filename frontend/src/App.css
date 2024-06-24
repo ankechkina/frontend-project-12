@@ -9,3 +9,18 @@
 form {
 	min-width: 500px;
 }
+
+.chat-messages {
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	min-height: 100px;
+	background-color: red;
+ }
+ 
+ .message {
+	padding: 10px;
+	margin-bottom: 10px;
+	background-color: #f1f1f1;
+	border-radius: 5px;
+ }

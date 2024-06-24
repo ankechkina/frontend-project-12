@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useLoginMutation } from '../api/authApi';
 import { setUserData } from '../store/authSlice';
+import { ROUTES } from '../utils/router';
 
 const Login = () => {
   const [login, { isLoading }] = useLoginMutation();
@@ -20,7 +21,7 @@ const Login = () => {
       const user = await login(values).unwrap();
       localStorage.setItem('token', user.token);
       dispatch(setUserData({ token: user.token }));
-      navigate('/');
+      navigate(ROUTES.home);
     } catch (err) {
       setAuthError(true);
       setSubmitting(false);
