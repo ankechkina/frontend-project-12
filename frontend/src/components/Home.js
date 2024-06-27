@@ -19,10 +19,9 @@ const Home = () => {
 
   const { token, username } = useSelector((state) => state.authorization);
   const { channels, currentChannelId, loading: channelsLoading } = useSelector((state) => state.channels);
-  // сюда из сокетов нужно будет добавить наши сообщения
-  // const { messages } = useSelector((state) => state.messages);
+  const { messages } = useSelector((state) => state.messages);
 
-  const { sendMessage, messages: socketMessages } = useSocket();
+  const { sendMessage } = useSocket();
 
   const currentState = useSelector((state) => state);
 
@@ -56,6 +55,8 @@ const Home = () => {
 
   const currentChannel = channels.find((channel) => channel.id === currentChannelId);
   const currentChannelName = currentChannel.name;
+
+  const filteredMessages = messages.filter((message) => message.channelId === currentChannelId);
 
   return (
     <div className="h-100">
@@ -102,13 +103,13 @@ const Home = () => {
                       </b>
                     </p>
                     <span className="text-muted">
-                      {socketMessages.length}
+                      {filteredMessages.length}
                       {' '}
                       сообщений
                     </span>
                   </div>
                   <div id="messages-box" className="chat-messages overflow-auto px-5">
-                    {socketMessages.map((message, index) => (
+                    {filteredMessages && filteredMessages.map((message, index) => (
                       <div key={index} className="message">
                         <p>{message.body}</p>
                         <span className="text-muted">{message.username}</span>

@@ -24,6 +24,11 @@ export const loadMessages = createAsyncThunk(
 const messagesSlice = createSlice({
   name: 'messages',
   initialState,
+  reducers: {
+    setMessages: (state, action) => {
+      state.messages.push(action.payload);
+    },
+  },
   extraReducers: {
     [loadMessages.pending]: (state) => {
       state.loading = true;
@@ -39,5 +44,7 @@ const messagesSlice = createSlice({
     },
   },
 });
+
+export const { setMessages } = messagesSlice.actions;
 
 export default messagesSlice.reducer;

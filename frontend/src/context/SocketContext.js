@@ -3,16 +3,18 @@
 import React, {
   createContext, useContext, useEffect, useState,
 } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import socket from '../init';
 import { addMessage } from '../api/api';
+import { setMessages } from '../store/entities/messagesSlice';
 
 const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [messages, setMessages] = useState([]);
   const token = useSelector((state) => state.authorization.token);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const onConnect = () => {
@@ -25,7 +27,7 @@ export const SocketProvider = ({ children }) => {
 
     const onMessage = (message) => {
       console.log('New message received:', message);
-      setMessages((prevMessages) => [...prevMessages, message]);
+      dispatch(setMessages(message));
     };
 
     socket.on('connect', onConnect);
@@ -37,7 +39,7 @@ export const SocketProvider = ({ children }) => {
       socket.off('disconnect', onDisconnect);
       socket.off('newMessage', onMessage);
     };
-  }, []);
+  }, [dispatch]);
 
   const sendMessage = async (message) => {
     try {
@@ -48,7 +50,7 @@ export const SocketProvider = ({ children }) => {
   };
 
   return (
-    <SocketContext.Provider value={{ isConnected, messages, sendMessage }}>
+    <SocketContext.Provider value={{ isConnected, sendMessage }}>
       {children}
     </SocketContext.Provider>
   );
