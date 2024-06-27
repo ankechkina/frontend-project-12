@@ -1,4 +1,4 @@
-/* eslint-disable react/no-array-index-key, max-len */
+/* eslint-disable react/no-array-index-key, max-len, react-hooks/rules-of-hooks */
 
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import {
   loadChannels, loadMessages, logOut, setCurrentChannel,
-} from '../store/authSlice';
+} from '../store/entities/authSlice';
 import { API_ROUTES } from '../utils/router';
 import { useSocket } from '../context/SocketContext';
 
@@ -18,9 +18,15 @@ const Home = () => {
   const navigate = useNavigate();
   const {
     token, channels, currentChannel, username,
-  } = useSelector((state) => state.auth);
+  } = useSelector((state) => state.authorization);
 
   const { sendMessage, messages: socketMessages } = useSocket();
+
+  const currentState = useSelector((state) => state);
+
+  useEffect(() => {
+    console.log(currentState);
+  }, [currentState]);
 
   useEffect(() => {
     if (token) {

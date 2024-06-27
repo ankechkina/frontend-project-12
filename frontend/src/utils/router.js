@@ -5,8 +5,9 @@ export const ROUTES = {
 };
 
 export const API_ROUTES = {
+  base: '/api/v1',
   login: '/login',
   signup: '/signup',
   channels: '/data',
-  base: '/api/v1',
+  messages: '/messages',
 };

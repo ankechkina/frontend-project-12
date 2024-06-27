@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useLoginMutation } from '../api/authApi';
-import { setUserData } from '../store/authSlice';
+import { setUserData } from '../store/entities/authSlice';
 import { ROUTES } from '../utils/router';
 
 const Login = () => {

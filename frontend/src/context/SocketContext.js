@@ -5,23 +5,21 @@ import React, {
 } from 'react';
 import { useSelector } from 'react-redux';
 import socket from '../init';
-import { addMessage } from '../api/api'; // Импортируйте новую функцию
+import { addMessage } from '../api/api';
 
 const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [messages, setMessages] = useState([]);
-  const token = useSelector((state) => state.auth.token); // Получите токен из состояния
+  const token = useSelector((state) => state.authorization.token);
 
   useEffect(() => {
     const onConnect = () => {
-      console.log('Connected to socket server');
       setIsConnected(true);
     };
 
     const onDisconnect = () => {
-      console.log('Disconnected from socket server');
       setIsConnected(false);
     };
 
@@ -32,20 +30,18 @@ export const SocketProvider = ({ children }) => {
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
-    socket.on('newMessage', onMessage); // Изменено на 'newMessage'
+    socket.on('newMessage', onMessage);
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
-      socket.off('newMessage', onMessage); // Изменено на 'newMessage'
+      socket.off('newMessage', onMessage);
     };
   }, []);
 
   const sendMessage = async (message) => {
     try {
-      console.log('Sending message:', message);
-      const response = await addMessage(message, token); // Используйте новую функцию для отправки сообщения
-      console.log('Message sent:', response);
+      await addMessage(message, token);
     } catch (error) {
       console.error('Ошибка при отправке сообщения:', error);
     }

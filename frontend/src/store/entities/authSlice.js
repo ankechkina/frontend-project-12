@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchChannels, fetchMessages } from '../api/api';
+import { fetchChannels, fetchMessages } from '../../api/api';
 
 const initialState = {
   token: localStorage.getItem('token') || null,
@@ -15,7 +15,7 @@ const initialState = {
 export const loadChannels = createAsyncThunk(
   'auth/loadChannels',
   async (_, { getState }) => {
-    const { token } = getState().auth;
+    const { token } = getState().authorization;
     try {
       const channelsData = await fetchChannels(token);
       return channelsData;
@@ -29,7 +29,7 @@ export const loadChannels = createAsyncThunk(
 export const loadMessages = createAsyncThunk(
   'auth/loadMessages',
   async (_, { getState }) => {
-    const { token } = getState().auth;
+    const { token } = getState().authorization;
     try {
       const messagesData = await fetchMessages(token);
       return messagesData;
@@ -41,7 +41,7 @@ export const loadMessages = createAsyncThunk(
 );
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: 'authorization',
   initialState,
   reducers: {
     setUserData: (state, action) => {

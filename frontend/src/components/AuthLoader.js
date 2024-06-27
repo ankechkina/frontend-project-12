@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setUserData } from '../store/authSlice';
+import { setUserData } from '../store/entities/authSlice';
 import { ROUTES } from '../utils/router';
 
 const AuthLoader = ({ children }) => {
