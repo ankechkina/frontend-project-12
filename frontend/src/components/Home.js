@@ -7,18 +7,20 @@ import {
 } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
-import {
-  loadChannels, loadMessages, logOut, setCurrentChannel,
-} from '../store/entities/authSlice';
+import { logOut } from '../store/entities/authSlice';
+import { loadChannels, setCurrentChannel } from '../store/entities/channelsSlice';
+import { loadMessages } from '../store/entities/messagesSlice';
 import { API_ROUTES } from '../utils/router';
 import { useSocket } from '../context/SocketContext';
 
 const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {
-    token, channels, currentChannel, username,
-  } = useSelector((state) => state.authorization);
+
+  const { token, username } = useSelector((state) => state.authorization);
+  const { channels, currentChannelId, loading: channelsLoading } = useSelector((state) => state.channels);
+  // сюда из сокетов нужно будет добавить наши сообщения
+  // const { messages } = useSelector((state) => state.messages);
 
   const { sendMessage, messages: socketMessages } = useSocket();
 
@@ -40,9 +42,20 @@ const Home = () => {
     navigate(API_ROUTES.login);
   };
 
-  const handleChannelClick = (channelName) => {
-    dispatch(setCurrentChannel(channelName));
+  const handleChannelClick = (channelId) => {
+    dispatch(setCurrentChannel(channelId));
   };
+
+  if (!token) {
+    return null;
+  }
+
+  if (channelsLoading || channels.length === 0) {
+    return <div>Loading...</div>;
+  }
+
+  const currentChannel = channels.find((channel) => channel.id === currentChannelId);
+  const currentChannelName = currentChannel.name;
 
   return (
     <div className="h-100">
@@ -68,9 +81,9 @@ const Home = () => {
                         type="button"
                         className={classNames(
                           'w-100 rounded-0 text-start btn',
-                          { 'btn-secondary': channel.name === currentChannel },
+                          { 'btn-secondary': channel.id === currentChannelId },
                         )}
-                        onClick={() => handleChannelClick(channel.name)}
+                        onClick={() => handleChannelClick(channel.id)}
                       >
                         <span className="me-1">#</span>
                         {channel.name}
@@ -85,7 +98,7 @@ const Home = () => {
                     <p className="m-0">
                       <b>
                         #
-                        {currentChannel}
+                        {currentChannelName}
                       </b>
                     </p>
                     <span className="text-muted">
@@ -106,8 +119,7 @@ const Home = () => {
                     <Formik
                       initialValues={{ message: '' }}
                       onSubmit={(values, { setSubmitting, resetForm }) => {
-                        const channelId = channels.find((channel) => channel.name === currentChannel).id;
-                        sendMessage({ body: values.message, channelId, username });
+                        sendMessage({ body: values.message, channelId: currentChannelId, username });
                         setSubmitting(false);
                         resetForm();
                       }}
