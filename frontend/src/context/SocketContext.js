@@ -5,8 +5,7 @@ import React, {
 } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import socket from '../init';
-import { addMessage } from '../api/api';
-import { setMessages } from '../store/entities/messagesSlice';
+import { addNewMessage } from '../store/entities/messagesSlice';
 
 const SocketContext = createContext();
 
@@ -27,7 +26,7 @@ export const SocketProvider = ({ children }) => {
 
     const onMessage = (message) => {
       console.log('New message received:', message);
-      dispatch(setMessages(message));
+      dispatch(addNewMessage(message));
     };
 
     socket.on('connect', onConnect);
@@ -41,16 +40,16 @@ export const SocketProvider = ({ children }) => {
     };
   }, [dispatch]);
 
-  const sendMessage = async (message) => {
+  /* const sendMessage = async (message) => {
     try {
       await addMessage(message, token);
     } catch (error) {
       console.error('Ошибка при отправке сообщения:', error);
     }
-  };
+  }; */
 
   return (
-    <SocketContext.Provider value={{ isConnected, sendMessage }}>
+    <SocketContext.Provider value={{ isConnected }}>
       {children}
     </SocketContext.Provider>
   );

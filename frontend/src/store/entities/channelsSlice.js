@@ -1,26 +1,12 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchChannels } from '../../api/api';
+import { createSlice } from '@reduxjs/toolkit';
+
+export const defaultChannelId = '1';
 
 const initialState = {
   channels: [],
-  currentChannelId: '1',
-  loading: false,
+  currentChannelId: defaultChannelId,
   error: null,
 };
-
-export const loadChannels = createAsyncThunk(
-  'auth/loadChannels',
-  async (_, { getState }) => {
-    const { token } = getState().authorization;
-    try {
-      const channelsData = await fetchChannels(token);
-      return channelsData;
-    } catch (error) {
-      console.error('Ошибка при загрузке каналов:', error);
-      throw error;
-    }
-  },
-);
 
 const channelsSlice = createSlice({
   name: 'channels',
@@ -29,23 +15,15 @@ const channelsSlice = createSlice({
     setCurrentChannel: (state, action) => {
       state.currentChannelId = action.payload;
     },
-  },
-  extraReducers: {
-    [loadChannels.pending]: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    [loadChannels.fulfilled]: (state, action) => {
-      state.loading = false;
+    setFetchedChannels: (state, action) => {
       state.channels = action.payload;
     },
-    [loadChannels.rejected]: (state, action) => {
-      state.loading = false;
-      state.error = action.error.message;
+    setChannelsError: (state, action) => {
+      state.error = action.payload;
     },
   },
 });
 
-export const { setCurrentChannel } = channelsSlice.actions;
+export const { setCurrentChannel, setFetchedChannels, setChannelsError } = channelsSlice.actions;
 
 export default channelsSlice.reducer;

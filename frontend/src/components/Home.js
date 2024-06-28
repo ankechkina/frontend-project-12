@@ -8,20 +8,16 @@ import {
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { logOut } from '../store/entities/authSlice';
-import { loadChannels, setCurrentChannel } from '../store/entities/channelsSlice';
-import { loadMessages } from '../store/entities/messagesSlice';
+import { setCurrentChannel, setFetchedChannels, setChannelsError } from '../store/entities/channelsSlice';
+import { setMessages, setMessagesError } from '../store/entities/messagesSlice';
 import { API_ROUTES } from '../utils/router';
-import { useSocket } from '../context/SocketContext';
+import { useGetChannelsQuery } from '../api/channelsApi';
+import { useGetMessagesQuery } from '../api/messagesApi';
 
 const Home = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   const { token, username } = useSelector((state) => state.authorization);
-  const { channels, currentChannelId, loading: channelsLoading } = useSelector((state) => state.channels);
+  const { channels, currentChannelId } = useSelector((state) => state.channels);
   const { messages } = useSelector((state) => state.messages);
-
-  const { sendMessage } = useSocket();
 
   const currentState = useSelector((state) => state);
 
@@ -29,12 +25,48 @@ const Home = () => {
     console.log(currentState);
   }, [currentState]);
 
+  if (!token) {
+    return <div>Please log in</div>;
+  }
+
+  return <HomeContent token={token} channels={channels} currentChannelId={currentChannelId} messages={messages} username={username} />;
+};
+
+const HomeContent = ({
+  token, channels, currentChannelId, messages, username,
+}) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { data: channelsData, error: channelsError, isLoading: isLoadingChannels } = useGetChannelsQuery();
+
+  const { data: messagesData, error: messagesError } = useGetMessagesQuery();
+
   useEffect(() => {
-    if (token) {
-      dispatch(loadChannels());
-      dispatch(loadMessages());
+    if (channelsError) {
+      console.error(channelsError.message);
+      dispatch(setChannelsError(channelsError.message));
     }
-  }, [dispatch, token]);
+  }, [channelsError, dispatch]);
+
+  useEffect(() => {
+    if (channelsData) {
+      dispatch(setFetchedChannels(channelsData));
+    }
+  }, [channelsData, dispatch]);
+
+  useEffect(() => {
+    if (messagesError) {
+      console.error(messagesError.message);
+      dispatch(setMessagesError(messagesError.message));
+    }
+  }, [messagesError, dispatch]);
+
+  useEffect(() => {
+    if (messagesData) {
+      dispatch(setMessages(messagesData));
+    }
+  }, [messagesData, dispatch]);
 
   const handleLogout = () => {
     dispatch(logOut());
@@ -45,18 +77,14 @@ const Home = () => {
     dispatch(setCurrentChannel(channelId));
   };
 
-  if (!token) {
-    return null;
-  }
-
-  if (channelsLoading || channels.length === 0) {
-    return <div>Loading...</div>;
-  }
-
   const currentChannel = channels.find((channel) => channel.id === currentChannelId);
-  const currentChannelName = currentChannel.name;
+  const currentChannelName = currentChannel ? currentChannel.name : 'Unknown Channel';
 
   const filteredMessages = messages.filter((message) => message.channelId === currentChannelId);
+
+  if (isLoadingChannels) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="h-100">
@@ -120,7 +148,7 @@ const Home = () => {
                     <Formik
                       initialValues={{ message: '' }}
                       onSubmit={(values, { setSubmitting, resetForm }) => {
-                        sendMessage({ body: values.message, channelId: currentChannelId, username });
+                        // sendMessage({ body: values.message, channelId: currentChannelId, username });
                         setSubmitting(false);
                         resetForm();
                       }}
