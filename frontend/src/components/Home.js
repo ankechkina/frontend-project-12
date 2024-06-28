@@ -1,5 +1,3 @@
-/* eslint-disable react/no-array-index-key, max-len, react-hooks/rules-of-hooks */
-
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -12,10 +10,10 @@ import { setCurrentChannel, setFetchedChannels, setChannelsError } from '../stor
 import { setMessages, setMessagesError } from '../store/entities/messagesSlice';
 import { API_ROUTES } from '../utils/router';
 import { useGetChannelsQuery } from '../api/channelsApi';
-import { useGetMessagesQuery } from '../api/messagesApi';
+import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
 
 const Home = () => {
-  const { token, username } = useSelector((state) => state.authorization);
+  const { token, username } = useSelector((state) => state.user);
   const { channels, currentChannelId } = useSelector((state) => state.channels);
   const { messages } = useSelector((state) => state.messages);
 
@@ -29,23 +27,51 @@ const Home = () => {
     return <div>Please log in</div>;
   }
 
-  return <HomeContent token={token} channels={channels} currentChannelId={currentChannelId} messages={messages} username={username} />;
+  return (
+    <HomeContent
+      token={token}
+      channels={channels}
+      currentChannelId={currentChannelId}
+      messages={messages}
+      username={username}
+    />
+  );
 };
 
 const HomeContent = ({
-  token, channels, currentChannelId, messages, username,
+  channels, currentChannelId, messages, username,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { data: channelsData, error: channelsError, isLoading: isLoadingChannels } = useGetChannelsQuery();
-
+  const {
+    data: channelsData,
+    error: channelsError,
+    isLoading: isLoadingChannels,
+  } = useGetChannelsQuery();
   const { data: messagesData, error: messagesError } = useGetMessagesQuery();
+
+  const [addMessage] = useAddMessageMutation();
+
+  const handleSendMessage = async (values, { setSubmitting, resetForm }) => {
+    try {
+      await addMessage({ body: values.message, channelId: currentChannelId, username }).unwrap();
+      resetForm();
+      dispatch(setMessagesError(null));
+    } catch (error) {
+      console.error(error.message);
+      dispatch(setMessagesError(error.message));
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     if (channelsError) {
       console.error(channelsError.message);
       dispatch(setChannelsError(channelsError.message));
+    } else {
+      dispatch(setChannelsError(null));
     }
   }, [channelsError, dispatch]);
 
@@ -59,6 +85,8 @@ const HomeContent = ({
     if (messagesError) {
       console.error(messagesError.message);
       dispatch(setMessagesError(messagesError.message));
+    } else {
+      dispatch(setMessagesError(null));
     }
   }, [messagesError, dispatch]);
 
@@ -92,7 +120,13 @@ const HomeContent = ({
         <div className="d-flex flex-column chat-page">
           <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
             <a className="navbar-brand" href="/">Hexlet Chat</a>
-            <button onClick={handleLogout} type="button" className="btn btn-primary logout-button">Выйти</button>
+            <button
+              onClick={handleLogout}
+              type="button"
+              className="btn btn-primary logout-button"
+            >
+              Выйти
+            </button>
           </nav>
           <div className="container h-100 my-4 overflow-hidden rounded shadow">
             <div className="row h-100 bg-white flex-md-row">
@@ -103,7 +137,10 @@ const HomeContent = ({
                     <span>+</span>
                   </button>
                 </div>
-                <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
+                <ul
+                  id="channels-box"
+                  className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
+                >
                   {channels.map((channel) => (
                     <li key={channel.id} className="nav-item w-100">
                       <button
@@ -137,8 +174,8 @@ const HomeContent = ({
                     </span>
                   </div>
                   <div id="messages-box" className="chat-messages overflow-auto px-5">
-                    {filteredMessages && filteredMessages.map((message, index) => (
-                      <div key={index} className="message">
+                    {filteredMessages.map((message) => (
+                      <div key={message.id} className="message">
                         <p>{message.body}</p>
                         <span className="text-muted">{message.username}</span>
                       </div>
@@ -147,11 +184,7 @@ const HomeContent = ({
                   <div className="mt-auto px-5 py-3">
                     <Formik
                       initialValues={{ message: '' }}
-                      onSubmit={(values, { setSubmitting, resetForm }) => {
-                        // sendMessage({ body: values.message, channelId: currentChannelId, username });
-                        setSubmitting(false);
-                        resetForm();
-                      }}
+                      onSubmit={handleSendMessage}
                     >
                       {({ isSubmitting }) => (
                         <Form className="py-1 border rounded-2">

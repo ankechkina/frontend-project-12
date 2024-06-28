@@ -11,7 +11,7 @@ export default configureStore({
     [authApi.reducerPath]: authApi.reducer,
     [channelsApi.reducerPath]: channelsApi.reducer,
     [messagesApi.reducerPath]: messagesApi.reducer,
-    authorization: authReducer,
+    user: authReducer,
     channels: channelsReducer,
     messages: messagesReducer,
   },

@@ -6,17 +6,17 @@ export const channelsApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: API_ROUTES.base,
     prepareHeaders: (headers, { getState }) => {
-      const { token } = getState().authorization;
+      const { token } = getState().user;
       if (token) {
-			  headers.set('Authorization', `Bearer ${token}`);
+        headers.set('Authorization', `Bearer ${token}`);
       }
       return headers;
-		 },
-	  }),
+    },
+  }),
   endpoints: (builder) => ({
     getChannels: builder.query({
       query: () => '/channels',
-		 }),
+    }),
   }),
 });
 

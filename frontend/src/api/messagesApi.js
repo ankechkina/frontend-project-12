@@ -6,18 +6,25 @@ export const messagesApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: API_ROUTES.base,
     prepareHeaders: (headers, { getState }) => {
-      const { token } = getState().authorization;
+      const { token } = getState().user;
       if (token) {
-			  headers.set('Authorization', `Bearer ${token}`);
+        headers.set('Authorization', `Bearer ${token}`);
       }
       return headers;
-		 },
-	  }),
+    },
+  }),
   endpoints: (builder) => ({
     getMessages: builder.query({
       query: () => '/messages',
-		 }),
+    }),
+    addMessage: builder.mutation({
+      query: (message) => ({
+        url: '/messages',
+        method: 'POST',
+        body: message,
+      }),
+    }),
   }),
 });
 
-export const { useGetMessagesQuery } = messagesApi;
+export const { useGetMessagesQuery, useAddMessageMutation } = messagesApi;

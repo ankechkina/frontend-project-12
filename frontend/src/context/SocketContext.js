@@ -1,9 +1,7 @@
-/* eslint-disable react/jsx-no-constructed-context-values, max-len */
-
 import React, {
-  createContext, useContext, useEffect, useState,
+  createContext, useContext, useEffect, useState, useMemo,
 } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import socket from '../init';
 import { addNewMessage } from '../store/entities/messagesSlice';
 
@@ -11,8 +9,6 @@ const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const token = useSelector((state) => state.authorization.token);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -25,7 +21,6 @@ export const SocketProvider = ({ children }) => {
     };
 
     const onMessage = (message) => {
-      console.log('New message received:', message);
       dispatch(addNewMessage(message));
     };
 
@@ -40,16 +35,10 @@ export const SocketProvider = ({ children }) => {
     };
   }, [dispatch]);
 
-  /* const sendMessage = async (message) => {
-    try {
-      await addMessage(message, token);
-    } catch (error) {
-      console.error('Ошибка при отправке сообщения:', error);
-    }
-  }; */
+  const contextValue = useMemo(() => ({ isConnected }), [isConnected]);
 
   return (
-    <SocketContext.Provider value={{ isConnected }}>
+    <SocketContext.Provider value={contextValue}>
       {children}
     </SocketContext.Provider>
   );

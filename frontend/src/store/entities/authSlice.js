@@ -9,7 +9,7 @@ const initialState = {
 };
 
 const authSlice = createSlice({
-  name: 'authorization',
+  name: 'user',
   initialState,
   reducers: {
     setUserData: (state, action) => {
