@@ -55,6 +55,7 @@ const HomeContent = ({
   const [addMessage] = useAddMessageMutation();
 
   const [showModal, setShowModal] = useState(false);
+  const [dropdownsOpen, setDropdownsOpen] = useState({});
 
   const handleShow = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
@@ -111,6 +112,13 @@ const HomeContent = ({
     dispatch(setCurrentChannel(channelId));
   };
 
+  const handleToggleDropdown = (channelId) => {
+    setDropdownsOpen((prevState) => ({
+      ...prevState,
+      [channelId]: !prevState[channelId],
+    }));
+  };
+
   const currentChannel = channels.find((channel) => channel.id === currentChannelId);
   const currentChannelName = currentChannel ? currentChannel.name : 'Unknown Channel';
 
@@ -155,17 +163,64 @@ const HomeContent = ({
                 >
                   {channels.map((channel) => (
                     <li key={channel.id} className="nav-item w-100">
-                      <button
-                        type="button"
-                        className={classNames(
-                          'w-100 rounded-0 text-start btn',
-                          { 'btn-secondary': channel.id === currentChannelId },
+                      <div role="group" className="d-flex dropdown btn-group">
+                        <button
+                          type="button"
+                          className={classNames(
+                            'w-100 rounded-0 text-start btn',
+                            { 'btn-secondary': channel.id === currentChannelId },
+                          )}
+                          onClick={() => handleChannelClick(channel.id)}
+                        >
+                          <span className="me-1">#</span>
+                          {channel.name}
+                        </button>
+                        {channel.removable && (
+                        <>
+                          <button
+                            type="button"
+                            id="react-aria9508819444-:r0:"
+                            aria-expanded={!!dropdownsOpen[channel.id]}
+                            className={classNames(
+                              'flex-grow-0 dropdown-toggle dropdown-toggle-split btn',
+                              { 'btn-secondary': channel.id === currentChannelId },
+                            )}
+                            onClick={() => handleToggleDropdown(channel.id)}
+                          >
+                            <span className="visually-hidden">Управление каналом</span>
+                          </button>
+                          {dropdownsOpen[channel.id] && (
+                          <div
+                            aria-labelledby="react-aria4401694813-:r0:"
+                            className="dropdown-menu show"
+                            data-popper-reference-hidden="false"
+                            data-popper-escaped="false"
+                            data-popper-placement="bottom-end"
+                            style={{ position: 'absolute', inset: '0px 0px auto auto', transform: 'translate(0px, 40px)' }}
+                          >
+                            <a
+                              data-rr-ui-dropdown-item=""
+                              className="dropdown-item"
+                              role="button"
+                              tabIndex="0"
+                              href="#"
+                            >
+                              Удалить
+                            </a>
+                            <a
+                              data-rr-ui-dropdown-item=""
+                              className="dropdown-item"
+                              role="button"
+                              tabIndex="0"
+                              href="#"
+                            >
+                              Переименовать
+                            </a>
+                          </div>
+                          )}
+                        </>
                         )}
-                        onClick={() => handleChannelClick(channel.id)}
-                      >
-                        <span className="me-1">#</span>
-                        {channel.name}
-                      </button>
+                      </div>
                     </li>
                   ))}
                 </ul>
