@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Formik, Form, Field, ErrorMessage,
@@ -11,6 +11,7 @@ import { setMessages, setMessagesError } from '../store/entities/messagesSlice';
 import { API_ROUTES } from '../utils/router';
 import { useGetChannelsQuery } from '../api/channelsApi';
 import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
+import ModalComponent from '../modal/ModalComponent';
 
 const Home = () => {
   const { token, username } = useSelector((state) => state.user);
@@ -52,6 +53,11 @@ const HomeContent = ({
   const { data: messagesData, error: messagesError } = useGetMessagesQuery();
 
   const [addMessage] = useAddMessageMutation();
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShow = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
 
   const handleSendMessage = async (values, { setSubmitting, resetForm }) => {
     try {
@@ -133,10 +139,16 @@ const HomeContent = ({
               <div className="col-4 col-md-2 border-end px-0 bg-light d-flex flex-column h-100">
                 <div className="d-flex mt-1 justify-content-between mb-2 p-4 ps-4 pe-2">
                   <b>Каналы</b>
-                  <button type="button" className="btn btn-group-vertical p-0 text-primary">
+                  <button
+                    type="button"
+                    className="btn btn-group-vertical p-0 text-primary"
+                    id="add-channel-button"
+                    onClick={handleShow}
+                  >
                     <span>+</span>
                   </button>
                 </div>
+                <ModalComponent show={showModal} handleClose={handleClose} />
                 <ul
                   id="channels-box"
                   className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"

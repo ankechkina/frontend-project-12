@@ -36,7 +36,7 @@ const Login = () => {
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
-          <Form>
+          <Form className="login-form">
             <h1>Войти</h1>
             <FormGroup>
               <Label htmlFor="username">Ваш ник</Label>

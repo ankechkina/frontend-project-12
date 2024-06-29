@@ -5,10 +5,6 @@
 	margin-top: -150px;
 }
 
-form {
-	min-width: 500px;
-}
-
 .chat-messages {
 	display: flex;
 	flex-direction: column;
@@ -50,4 +46,13 @@ form {
 
  .logout-button {
 	margin-right: 30vh;
+ }
+
+ .add-channel-button {
+	font-weight: bold;
+   font-size: large;
+ }
+
+ .login-form {
+	min-width: 20vw;
  }
