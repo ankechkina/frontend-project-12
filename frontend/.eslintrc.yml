@@ -39,4 +39,5 @@ rules:
   no-param-reassign: off
   no-unused-vars: off
   jsx-a11y/anchor-is-valid: off
+  max-len: off
   

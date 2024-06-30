@@ -11,7 +11,8 @@ import { setMessages, setMessagesError } from '../store/entities/messagesSlice';
 import { API_ROUTES } from '../utils/router';
 import { useGetChannelsQuery } from '../api/channelsApi';
 import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
-import ModalComponent from '../modal/ModalComponent';
+import ModalAddChannel from '../modal/ModalAddChannel';
+import ModalRenameChannel from '../modal/ModalRenameChannel';
 
 const Home = () => {
   const { token, username } = useSelector((state) => state.user);
@@ -54,11 +55,16 @@ const HomeContent = ({
 
   const [addMessage] = useAddMessageMutation();
 
-  const [showModal, setShowModal] = useState(false);
   const [dropdownsOpen, setDropdownsOpen] = useState({});
+  const [currentDropDownId, setCurrentDropDownId] = useState(currentChannelId);
 
-  const handleShow = () => setShowModal(true);
-  const handleClose = () => setShowModal(false);
+  const [showModalAdd, setshowModalAdd] = useState(false);
+  const handleShowAdd = () => setshowModalAdd(true);
+  const handleCloseAdd = () => setshowModalAdd(false);
+
+  const [showModalRename, setshowModalRename] = useState(false);
+  const handleShowRename = () => setshowModalRename(true);
+  const handleCloseRename = () => setshowModalRename(false);
 
   const handleSendMessage = async (values, { setSubmitting, resetForm }) => {
     try {
@@ -117,6 +123,7 @@ const HomeContent = ({
       ...prevState,
       [channelId]: !prevState[channelId],
     }));
+    setCurrentDropDownId(channelId);
   };
 
   const currentChannel = channels.find((channel) => channel.id === currentChannelId);
@@ -151,12 +158,12 @@ const HomeContent = ({
                     type="button"
                     className="btn btn-group-vertical p-0 text-primary"
                     id="add-channel-button"
-                    onClick={handleShow}
+                    onClick={handleShowAdd}
                   >
                     <span>+</span>
                   </button>
                 </div>
-                <ModalComponent show={showModal} handleClose={handleClose} />
+                <ModalAddChannel show={showModalAdd} handleClose={handleCloseAdd} />
                 <ul
                   id="channels-box"
                   className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
@@ -175,11 +182,11 @@ const HomeContent = ({
                           <span className="me-1">#</span>
                           {channel.name}
                         </button>
+                        <ModalRenameChannel show={showModalRename} handleClose={handleCloseRename} channelId={currentDropDownId} />
                         {channel.removable && (
                         <>
                           <button
                             type="button"
-                            id="react-aria9508819444-:r0:"
                             aria-expanded={!!dropdownsOpen[channel.id]}
                             className={classNames(
                               'flex-grow-0 dropdown-toggle dropdown-toggle-split btn',
@@ -189,35 +196,15 @@ const HomeContent = ({
                           >
                             <span className="visually-hidden">Управление каналом</span>
                           </button>
-                          {dropdownsOpen[channel.id] && (
                           <div
-                            aria-labelledby="react-aria4401694813-:r0:"
-                            className="dropdown-menu show"
-                            data-popper-reference-hidden="false"
-                            data-popper-escaped="false"
-                            data-popper-placement="bottom-end"
-                            style={{ position: 'absolute', inset: '0px 0px auto auto', transform: 'translate(0px, 40px)' }}
+                            className={classNames(
+                              'dropdown-menu',
+                              { show: !!dropdownsOpen[channel.id] },
+                            )}
                           >
-                            <a
-                              data-rr-ui-dropdown-item=""
-                              className="dropdown-item"
-                              role="button"
-                              tabIndex="0"
-                              href="#"
-                            >
-                              Удалить
-                            </a>
-                            <a
-                              data-rr-ui-dropdown-item=""
-                              className="dropdown-item"
-                              role="button"
-                              tabIndex="0"
-                              href="#"
-                            >
-                              Переименовать
-                            </a>
+                            <a href="#" className="dropdown-item" onClick={handleShowRename}>Переименовать</a>
+                            <a href="#" className="dropdown-item">Удалить</a>
                           </div>
-                          )}
                         </>
                         )}
                       </div>
@@ -234,17 +221,15 @@ const HomeContent = ({
                         {currentChannelName}
                       </b>
                     </p>
-                    <span className="text-muted">
-                      {filteredMessages.length}
-                      {' '}
-                      сообщений
-                    </span>
+                    <span className="text-muted">{`${filteredMessages.length} сообщений`}</span>
                   </div>
-                  <div id="messages-box" className="chat-messages overflow-auto px-5">
+                  <div id="messages-box" className="chat-messages overflow-auto px-5 ">
                     {filteredMessages.map((message) => (
-                      <div key={message.id} className="message">
-                        <p>{message.body}</p>
-                        <span className="text-muted">{message.username}</span>
+                      <div key={message.id} className="text-break mb-2">
+                        <b>{message.username}</b>
+                        :
+                        {' '}
+                        {message.body}
                       </div>
                     ))}
                   </div>
@@ -253,19 +238,27 @@ const HomeContent = ({
                       initialValues={{ message: '' }}
                       onSubmit={handleSendMessage}
                     >
-                      {({ isSubmitting }) => (
-                        <Form className="py-1 border rounded-2">
+                      {({
+                        values, handleChange, handleSubmit, isSubmitting,
+                      }) => (
+                        <Form noValidate="" className="py-1 border rounded-2" onSubmit={handleSubmit}>
                           <div className="input-group has-validation">
                             <Field
-                              type="text"
                               name="message"
+                              aria-label="Новое сообщение"
                               placeholder="Введите сообщение..."
                               className="border-0 p-0 ps-2 form-control"
                             />
-                            <ErrorMessage name="message" component="div" className="invalid-feedback" />
-                            <button type="submit" disabled={isSubmitting} className="btn btn-group-vertical">
-                              <span>Отправить</span>
+                            <button
+                              type="submit"
+                              className="btn btn-group-vertical"
+                              disabled={isSubmitting}
+                            >
+                              Отправить
                             </button>
+                            <div className="invalid-feedback">
+                              <ErrorMessage name="body" />
+                            </div>
                           </div>
                         </Form>
                       )}
@@ -276,7 +269,6 @@ const HomeContent = ({
             </div>
           </div>
         </div>
-        <div className="Toastify" />
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useAddChannelMutation } from '../api/channelsApi';
 import { addNewChannel, setChannelsError, setCurrentChannel } from '../store/entities/channelsSlice';
 
-const ModalComponent = ({ show, handleClose }) => {
+const ModalAddChannel = ({ show, handleClose }) => {
   const [addChannel, { isLoading }] = useAddChannelMutation();
   const dispatch = useDispatch();
 
@@ -60,4 +60,4 @@ const ModalComponent = ({ show, handleClose }) => {
   );
 };
 
-export default ModalComponent;
+export default ModalAddChannel;
