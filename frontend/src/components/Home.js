@@ -11,9 +11,7 @@ import { setMessages, setMessagesError } from '../store/entities/messagesSlice';
 import { API_ROUTES } from '../utils/router';
 import { useGetChannelsQuery } from '../api/channelsApi';
 import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
-import ModalAddChannel from '../modal/ModalAddChannel';
-import ModalRenameChannel from '../modal/ModalRenameChannel';
-import ModalRemoveChannel from '../modal/ModalRemoveChannel';
+import ModalWindow from '../modal/ModalWindow';
 
 const Home = () => {
   const { token, username } = useSelector((state) => state.user);
@@ -57,19 +55,10 @@ const HomeContent = ({
   const [addMessage] = useAddMessageMutation();
 
   const [dropdownsOpen, setDropdownsOpen] = useState({});
-  const [currentDropDownId, setCurrentDropDownId] = useState(currentChannelId);
 
-  const [showModalAdd, setshowModalAdd] = useState(false);
-  const handleShowAdd = () => setshowModalAdd(true);
-  const handleCloseAdd = () => setshowModalAdd(false);
-
-  const [showModalRename, setshowModalRename] = useState(false);
-  const handleShowRename = () => setshowModalRename(true);
-  const handleCloseRename = () => setshowModalRename(false);
-
-  const [showModalRemove, setshowModalRemove] = useState(false);
-  const handleShowRemove = () => setshowModalRemove(true);
-  const handleCloseRemove = () => setshowModalRemove(false);
+  const [modalInfo, setModalInfo] = useState({ type: null, props: {} });
+  const handleShowModal = (type, props = {}) => setModalInfo({ type, props });
+  const handleCloseModal = () => setModalInfo({ type: null, props: {} });
 
   const handleSendMessage = async (values, { setSubmitting, resetForm }) => {
     try {
@@ -128,7 +117,6 @@ const HomeContent = ({
       ...prevState,
       [channelId]: !prevState[channelId],
     }));
-    setCurrentDropDownId(channelId);
   };
 
   const currentChannel = channels.find((channel) => channel.id === currentChannelId);
@@ -163,12 +151,11 @@ const HomeContent = ({
                     type="button"
                     className="btn btn-group-vertical p-0 text-primary"
                     id="add-channel-button"
-                    onClick={handleShowAdd}
+                    onClick={() => handleShowModal('adding')}
                   >
                     <span>+</span>
                   </button>
                 </div>
-                <ModalAddChannel show={showModalAdd} handleClose={handleCloseAdd} />
                 <ul
                   id="channels-box"
                   className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
@@ -187,8 +174,6 @@ const HomeContent = ({
                           <span className="me-1">#</span>
                           {channel.name}
                         </button>
-                        <ModalRenameChannel show={showModalRename} handleClose={handleCloseRename} channelId={currentDropDownId} />
-                        <ModalRemoveChannel show={showModalRemove} handleClose={handleCloseRemove} channelId={currentDropDownId} />
                         {channel.removable && (
                         <>
                           <button
@@ -208,8 +193,8 @@ const HomeContent = ({
                               { show: !!dropdownsOpen[channel.id] },
                             )}
                           >
-                            <a href="#" className="dropdown-item" onClick={handleShowRename}>Переименовать</a>
-                            <a href="#" className="dropdown-item" onClick={handleShowRemove}>Удалить</a>
+                            <a href="#" className="dropdown-item" onClick={() => handleShowModal('renaming', { channelId: channel.id })}>Переименовать</a>
+                            <a href="#" className="dropdown-item" onClick={() => handleShowModal('removing', { channelId: channel.id })}>Удалить</a>
                           </div>
                         </>
                         )}
@@ -276,6 +261,12 @@ const HomeContent = ({
           </div>
         </div>
       </div>
+      <ModalWindow
+        show={!!modalInfo.type}
+        handleClose={handleCloseModal}
+        modalType={modalInfo.type}
+        modalProps={modalInfo.props}
+      />
     </div>
   );
 };
