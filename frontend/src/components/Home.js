@@ -13,6 +13,7 @@ import { useGetChannelsQuery } from '../api/channelsApi';
 import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
 import ModalAddChannel from '../modal/ModalAddChannel';
 import ModalRenameChannel from '../modal/ModalRenameChannel';
+import ModalRemoveChannel from '../modal/ModalRemoveChannel';
 
 const Home = () => {
   const { token, username } = useSelector((state) => state.user);
@@ -65,6 +66,10 @@ const HomeContent = ({
   const [showModalRename, setshowModalRename] = useState(false);
   const handleShowRename = () => setshowModalRename(true);
   const handleCloseRename = () => setshowModalRename(false);
+
+  const [showModalRemove, setshowModalRemove] = useState(false);
+  const handleShowRemove = () => setshowModalRemove(true);
+  const handleCloseRemove = () => setshowModalRemove(false);
 
   const handleSendMessage = async (values, { setSubmitting, resetForm }) => {
     try {
@@ -183,6 +188,7 @@ const HomeContent = ({
                           {channel.name}
                         </button>
                         <ModalRenameChannel show={showModalRename} handleClose={handleCloseRename} channelId={currentDropDownId} />
+                        <ModalRemoveChannel show={showModalRemove} handleClose={handleCloseRemove} channelId={currentDropDownId} />
                         {channel.removable && (
                         <>
                           <button
@@ -203,7 +209,7 @@ const HomeContent = ({
                             )}
                           >
                             <a href="#" className="dropdown-item" onClick={handleShowRename}>Переименовать</a>
-                            <a href="#" className="dropdown-item">Удалить</a>
+                            <a href="#" className="dropdown-item" onClick={handleShowRemove}>Удалить</a>
                           </div>
                         </>
                         )}
