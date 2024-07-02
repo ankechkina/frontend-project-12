@@ -2,25 +2,13 @@ import React from 'react';
 import {
   Formik, Form, Field, ErrorMessage,
 } from 'formik';
-import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import classNames from 'classnames';
 import { useCreateNewUserMutation } from '../api/authApi';
 import { ROUTES } from '../utils/router';
 import { setUserData } from '../store/entities/authSlice';
-
-const SignupSchema = Yup.object().shape({
-  username: Yup.string()
-    .min(3, 'От 3 до 20 символов')
-    .max(20, 'От 3 до 20 символов')
-    .required('Обязательное поле'),
-  password: Yup.string()
-    .min(6, 'Не менее 6 символов')
-    .required('Обязательное поле'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password'), null], 'Пароли должны совпадать')
-    .required('Обязательное поле'),
-});
+import { signupSchema } from '../utils/validationSchemas';
 
 const Signup = () => {
   const [createNewUser] = useCreateNewUserMutation();
@@ -35,7 +23,7 @@ const Signup = () => {
       localStorage.setItem('token', token);
       navigate(ROUTES.home);
     } catch (error) {
-      console.error('Failed to create a new user:', error);
+      console.error(error);
     } finally {
       setSubmitting(false);
     }
@@ -63,12 +51,12 @@ const Signup = () => {
                           password: '',
                           confirmPassword: '',
                         }}
-                        validationSchema={SignupSchema}
+                        validationSchema={signupSchema}
                         validateOnChange={false}
                         validateOnBlur={false}
                         onSubmit={handleSubmit}
                       >
-                        {({ isSubmitting, errors, touched }) => (
+                        {({ isSubmitting, errors }) => (
                           <Form className="w-50">
                             <h1 className="text-center mb-4">Регистрация</h1>
                             <div className="form-floating mb-3">
@@ -78,7 +66,7 @@ const Signup = () => {
                                 autoComplete="username"
                                 required
                                 id="username"
-                                className={`form-control ${errors.username && touched.username ? 'is-invalid' : ''}`}
+                                className={classNames('form-control', { 'is-invalid': errors.username })}
                               />
                               <label className="form-label" htmlFor="username">Имя пользователя</label>
                               <ErrorMessage name="username" component="div" className="invalid-tooltip" />
@@ -92,7 +80,7 @@ const Signup = () => {
                                 autoComplete="new-password"
                                 type="password"
                                 id="password"
-                                className={`form-control ${errors.password && touched.password ? 'is-invalid' : ''}`}
+                                className={classNames('form-control', { 'is-invalid': errors.password })}
                               />
                               <label className="form-label" htmlFor="password">Пароль</label>
                               <ErrorMessage name="password" component="div" className="invalid-tooltip" />
@@ -105,7 +93,7 @@ const Signup = () => {
                                 autoComplete="new-password"
                                 type="password"
                                 id="confirmPassword"
-                                className={`form-control ${errors.confirmPassword && touched.confirmPassword ? 'is-invalid' : ''}`}
+                                className={classNames('form-control', { 'is-invalid': errors.confirmPassword })}
                               />
                               <label className="form-label" htmlFor="confirmPassword">Подтвердите пароль</label>
                               <ErrorMessage name="confirmPassword" component="div" className="invalid-tooltip" />

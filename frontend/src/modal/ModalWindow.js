@@ -1,11 +1,13 @@
 import React from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { Formik, Field } from 'formik';
+import { Formik, Field, ErrorMessage } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
+import classNames from 'classnames';
 import { useAddChannelMutation, useEditChannelMutation, useRemoveChannelMutation } from '../api/channelsApi';
 import {
   addNewChannel, setChannelsError, setCurrentChannel, changeChannelName, removeChannel, defaultChannelId,
 } from '../store/entities/channelsSlice';
+import { channelNameSchema } from '../utils/validationSchemas';
 
 const ModalWindow = ({
   show, handleClose, modalType, modalProps,
@@ -15,6 +17,8 @@ const ModalWindow = ({
   const [addChannel] = useAddChannelMutation();
   const [renameChannel] = useEditChannelMutation();
   const [removeChannelApi] = useRemoveChannelMutation();
+
+  const { channels } = useSelector((state) => state.channels);
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
@@ -55,13 +59,20 @@ const ModalWindow = ({
       return (
         <Formik
           initialValues={{ name: '' }}
+          validationSchema={channelNameSchema(channels)}
           onSubmit={handleFormSubmit}
         >
-          {({ handleSubmit, isSubmitting }) => (
+          {({ handleSubmit, isSubmitting, errors }) => (
             <Form onSubmit={handleSubmit}>
               <Form.Group controlId="name">
                 <label htmlFor="name" className="form-label visually-hidden">Имя канала</label>
-                <Field name="name" type="text" className="form-control" id="name" />
+                <Field
+                  name="name"
+                  type="text"
+                  className={classNames('form-control', { 'is-invalid': errors.name })}
+                  id="name"
+                />
+                <ErrorMessage name="name" component="div" className="invalid-tooltip" />
               </Form.Group>
               <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>Отменить</Button>
