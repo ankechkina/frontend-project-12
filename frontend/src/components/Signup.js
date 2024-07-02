@@ -3,7 +3,11 @@ import {
   Formik, Form, Field, ErrorMessage,
 } from 'formik';
 import * as Yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useCreateNewUserMutation } from '../api/authApi';
+import { ROUTES } from '../utils/router';
+import { setUserData } from '../store/entities/authSlice';
 
 const SignupSchema = Yup.object().shape({
   username: Yup.string()
@@ -20,11 +24,16 @@ const SignupSchema = Yup.object().shape({
 
 const Signup = () => {
   const [createNewUser] = useCreateNewUserMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      await createNewUser(values);
-      console.log(values);
+      const response = await createNewUser(values);
+      const { token } = response.data;
+      dispatch(setUserData(response.data));
+      localStorage.setItem('token', token);
+      navigate(ROUTES.home);
     } catch (error) {
       console.error('Failed to create a new user:', error);
     } finally {

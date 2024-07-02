@@ -74,7 +74,7 @@ const HomeContent = ({
       resetForm();
       dispatch(setMessagesError(null));
     } catch (error) {
-      console.error(error.message);
+      console.error(error);
       dispatch(setMessagesError(error.message));
     } finally {
       setSubmitting(false);
@@ -83,7 +83,7 @@ const HomeContent = ({
 
   useEffect(() => {
     if (channelsError) {
-      console.error(channelsError.message);
+      console.error(channelsError);
       dispatch(setChannelsError(channelsError.message));
     } else {
       dispatch(setChannelsError(null));
@@ -98,7 +98,7 @@ const HomeContent = ({
 
   useEffect(() => {
     if (messagesError) {
-      console.error(messagesError.message);
+      console.error(messagesError);
       dispatch(setMessagesError(messagesError.message));
     } else {
       dispatch(setMessagesError(null));
