@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Formik, Form, Field, ErrorMessage,
 } from 'formik';
@@ -12,18 +12,25 @@ import { signupSchema } from '../utils/validationSchemas';
 
 const Signup = () => {
   const [createNewUser] = useCreateNewUserMutation();
+  const [serverError, setServerError] = useState('');
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleSubmit = async (values, { setSubmitting }) => {
+    setServerError('');
     try {
-      const response = await createNewUser(values);
-      const { token } = response.data;
-      dispatch(setUserData(response.data));
+      const response = await createNewUser(values).unwrap();
+      const { token } = response;
+      dispatch(setUserData(response));
       localStorage.setItem('token', token);
       navigate(ROUTES.home);
     } catch (error) {
-      console.error(error);
+      if (error.status === 409) {
+        setServerError('Такой пользователь уже существует');
+      } else {
+        console.error('Необработанная ошибка:', error);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -66,9 +73,10 @@ const Signup = () => {
                                 autoComplete="username"
                                 required
                                 id="username"
-                                className={classNames('form-control', { 'is-invalid': errors.username })}
+                                className={classNames('form-control', { 'is-invalid': errors.username || serverError })}
                               />
                               <label className="form-label" htmlFor="username">Имя пользователя</label>
+                              {serverError && <div className="invalid-tooltip">{serverError}</div>}
                               <ErrorMessage name="username" component="div" className="invalid-tooltip" />
                             </div>
                             <div className="form-floating mb-3">
