@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Formik, Form, Field, ErrorMessage,
@@ -44,6 +44,14 @@ const HomeContent = ({
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const messageRef = useRef(null);
+
+  useEffect(() => {
+    if (messageRef.current) {
+      messageRef.current.focus();
+    }
+  }, []);
 
   const {
     data: channelsData,
@@ -193,8 +201,8 @@ const HomeContent = ({
                               { show: !!dropdownsOpen[channel.id] },
                             )}
                           >
-                            <a href="#" className="dropdown-item" onClick={() => handleShowModal('renaming', { channelId: channel.id })}>Переименовать</a>
-                            <a href="#" className="dropdown-item" onClick={() => handleShowModal('removing', { channelId: channel.id })}>Удалить</a>
+                            <a href="#" className="dropdown-item" onClick={() => { handleShowModal('renaming', { channelId: channel.id }); handleToggleDropdown(channel.id); }}>Переименовать</a>
+                            <a href="#" className="dropdown-item" onClick={() => { handleShowModal('removing', { channelId: channel.id }); handleToggleDropdown(channel.id); }}>Удалить</a>
                           </div>
                         </>
                         )}
@@ -236,6 +244,7 @@ const HomeContent = ({
                           <div className="input-group has-validation">
                             <Field
                               name="message"
+                              innerRef={messageRef}
                               aria-label="Новое сообщение"
                               placeholder="Введите сообщение..."
                               className="border-0 p-0 ps-2 form-control"

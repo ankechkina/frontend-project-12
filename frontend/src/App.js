@@ -6,6 +6,7 @@ import NotFound from './components/NotFound';
 import AuthLoader from './components/AuthLoader';
 import { ROUTES } from './utils/router';
 import { SocketProvider } from './context/SocketContext';
+import Signup from './components/Signup';
 
 const App = () => (
   <SocketProvider>
@@ -13,6 +14,7 @@ const App = () => (
       <Routes>
         <Route path={ROUTES.home} element={<AuthLoader><Home /></AuthLoader>} />
         <Route path={ROUTES.login} element={<Login />} />
+        <Route path={ROUTES.signup} element={<Signup />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
