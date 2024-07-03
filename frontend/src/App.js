@@ -5,20 +5,17 @@ import Login from './components/Login';
 import NotFound from './components/NotFound';
 import AuthLoader from './components/AuthLoader';
 import { ROUTES } from './utils/router';
-import { SocketProvider } from './context/SocketContext';
 import Signup from './components/Signup';
 
 const App = () => (
-  <SocketProvider>
-    <Router>
-      <Routes>
-        <Route path={ROUTES.home} element={<AuthLoader><Home /></AuthLoader>} />
-        <Route path={ROUTES.login} element={<Login />} />
-        <Route path={ROUTES.signup} element={<Signup />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
-  </SocketProvider>
+  <Router>
+    <Routes>
+      <Route path={ROUTES.home} element={<AuthLoader><Home /></AuthLoader>} />
+      <Route path={ROUTES.login} element={<Login />} />
+      <Route path={ROUTES.signup} element={<Signup />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  </Router>
 );
 
 export default App;

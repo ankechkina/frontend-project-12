@@ -2,7 +2,7 @@ import React, {
   createContext, useContext, useEffect, useState, useMemo,
 } from 'react';
 import { useDispatch } from 'react-redux';
-import socket from '../init';
+import socket from '../utils/socket';
 import { addNewMessage } from '../store/entities/messagesSlice';
 
 const SocketContext = createContext();

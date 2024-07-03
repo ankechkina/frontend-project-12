@@ -1,7 +1,26 @@
-import { io } from 'socket.io-client';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { I18nextProvider } from 'react-i18next';
+import store from './store/index';
+import initializeI18n from './utils/i18nConfig';
+import { SocketProvider } from './context/SocketContext';
+import App from './App';
+import socket from './utils/socket';
 
-const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:5001';
+const init = async () => {
+  const i18n = await initializeI18n();
 
-const socket = io(URL);
+  return (
+    <React.StrictMode>
+      <Provider store={store}>
+        <I18nextProvider i18n={i18n}>
+          <SocketProvider socket={socket}>
+            <App />
+          </SocketProvider>
+        </I18nextProvider>
+      </Provider>
+    </React.StrictMode>
+  );
+};
 
-export default socket;
+export default init;
