@@ -5,6 +5,7 @@ import {
 } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { logOut } from '../store/entities/authSlice';
 import { setCurrentChannel, setFetchedChannels, setChannelsError } from '../store/entities/channelsSlice';
 import { setMessages, setMessagesError } from '../store/entities/messagesSlice';
@@ -46,6 +47,8 @@ const HomeContent = ({
   const navigate = useNavigate();
 
   const messageRef = useRef(null);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (messageRef.current) {
@@ -128,12 +131,12 @@ const HomeContent = ({
   };
 
   const currentChannel = channels.find((channel) => channel.id === currentChannelId);
-  const currentChannelName = currentChannel ? currentChannel.name : 'Unknown Channel';
+  const currentChannelName = currentChannel ? currentChannel.name : t('error.channelNotFound');
 
   const filteredMessages = messages.filter((message) => message.channelId === currentChannelId);
 
   if (isLoadingChannels) {
-    return <div>Loading...</div>;
+    return <div>{t('channels.loading')}</div>;
   }
 
   return (
@@ -141,20 +144,20 @@ const HomeContent = ({
       <div id="chat" className="h-100">
         <div className="d-flex flex-column chat-page">
           <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-            <a className="navbar-brand" href="/">Hexlet Chat</a>
+            <a className="navbar-brand" href="/">{t('login.navBrand')}</a>
             <button
               onClick={handleLogout}
               type="button"
               className="btn btn-primary logout-button"
             >
-              Выйти
+              {t('channels.logout')}
             </button>
           </nav>
           <div className="container h-100 my-4 overflow-hidden rounded shadow">
             <div className="row h-100 bg-white flex-md-row">
               <div className="col-4 col-md-2 border-end px-0 bg-light d-flex flex-column h-100">
                 <div className="d-flex mt-1 justify-content-between mb-2 p-4 ps-4 pe-2">
-                  <b>Каналы</b>
+                  <b>{t('channels.channels')}</b>
                   <button
                     type="button"
                     className="btn btn-group-vertical p-0 text-primary"
@@ -193,7 +196,7 @@ const HomeContent = ({
                             )}
                             onClick={() => handleToggleDropdown(channel.id)}
                           >
-                            <span className="visually-hidden">Управление каналом</span>
+                            <span className="visually-hidden">{t('channels.channelControl')}</span>
                           </button>
                           <div
                             className={classNames(
@@ -201,8 +204,8 @@ const HomeContent = ({
                               { show: !!dropdownsOpen[channel.id] },
                             )}
                           >
-                            <a href="#" className="dropdown-item" onClick={() => { handleShowModal('renaming', { channelId: channel.id }); handleToggleDropdown(channel.id); }}>Переименовать</a>
-                            <a href="#" className="dropdown-item" onClick={() => { handleShowModal('removing', { channelId: channel.id }); handleToggleDropdown(channel.id); }}>Удалить</a>
+                            <a href="#" className="dropdown-item" onClick={() => { handleShowModal('renaming', { channelId: channel.id }); handleToggleDropdown(channel.id); }}>{t('channels.rename')}</a>
+                            <a href="#" className="dropdown-item" onClick={() => { handleShowModal('removing', { channelId: channel.id }); handleToggleDropdown(channel.id); }}>{t('channels.delete')}</a>
                           </div>
                         </>
                         )}
@@ -220,7 +223,7 @@ const HomeContent = ({
                         {currentChannelName}
                       </b>
                     </p>
-                    <span className="text-muted">{`${filteredMessages.length} сообщений`}</span>
+                    <span className="text-muted">{`${t('channels.countMessages.messages', { count: filteredMessages.length })}`}</span>
                   </div>
                   <div id="messages-box" className="chat-messages overflow-auto px-5 ">
                     {filteredMessages.map((message) => (
@@ -245,8 +248,8 @@ const HomeContent = ({
                             <Field
                               name="message"
                               innerRef={messageRef}
-                              aria-label="Новое сообщение"
-                              placeholder="Введите сообщение..."
+                              aria-label={t('channels.newMessage')}
+                              placeholder={t('channels.enterMessage')}
                               className="border-0 p-0 ps-2 form-control"
                             />
                             <button
@@ -254,7 +257,7 @@ const HomeContent = ({
                               className="btn btn-group-vertical"
                               disabled={isSubmitting}
                             >
-                              Отправить
+                              {t('channels.send')}
                             </button>
                             <div className="invalid-feedback">
                               <ErrorMessage name="body" />

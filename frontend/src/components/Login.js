@@ -6,6 +6,7 @@ import {
 import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useLoginMutation } from '../api/authApi';
 import { setUserData } from '../store/entities/authSlice';
 import { ROUTES } from '../utils/router';
@@ -16,6 +17,8 @@ const Login = () => {
   const navigate = useNavigate();
   const [authError, setAuthError] = useState(false);
   const usernameRef = useRef(null);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     usernameRef.current.focus();
@@ -38,7 +41,7 @@ const Login = () => {
     <>
       <nav className="shadow-sm navbar navbar-expand-lg bg-white">
         <div>
-          <a className="navbar-brand" href="/">Hexlet Chat</a>
+          <a className="navbar-brand" href="/">{t('login.navBrand')}</a>
         </div>
       </nav>
       <div className="login-container">
@@ -48,15 +51,15 @@ const Login = () => {
         >
           {({ isSubmitting }) => (
             <Form className="login-form">
-              <h1>Войти</h1>
+              <h1>{t('login.login')}</h1>
               <FormGroup>
-                <Label htmlFor="username">Ваш ник</Label>
+                <Label htmlFor="username">{t('login.username')}</Label>
                 <Field
                   name="username"
                   type="text"
                   autoComplete="username"
                   required
-                  placeholder="Ваш ник"
+                  placeholder={t('login.username')}
                   id="username"
                   innerRef={usernameRef}
                   className={classNames('form-control', { 'is-invalid': authError })}
@@ -64,32 +67,32 @@ const Login = () => {
                 />
               </FormGroup>
               <FormGroup>
-                <Label htmlFor="password">Пароль</Label>
+                <Label htmlFor="password">{t('login.password')}</Label>
                 <Field
                   name="password"
                   type="password"
                   autoComplete="current-password"
                   required
-                  placeholder="Пароль"
+                  placeholder={t('login.password')}
                   id="password"
                   className={classNames('form-control', { 'is-invalid': authError })}
                   as={Input}
                 />
                 {authError && (
                 <div style={{ color: 'red', marginTop: '0.5rem' }}>
-                  Неверные имя пользователя или пароль
+                  {t('error.usernameOrPassword')}
                 </div>
                 )}
               </FormGroup>
               <Button type="submit" color="primary" disabled={isSubmitting || isLoading}>
-                Войти
+                {t('login.login')}
               </Button>
             </Form>
           )}
         </Formik>
         <div className="p-4">
-          <span>Нет аккаунта? </span>
-          <a href="/signup">Регистрация</a>
+          <span>{t('login.noAccount')}</span>
+          <a href="/signup">{t('signup.registration')}</a>
         </div>
       </div>
     </>

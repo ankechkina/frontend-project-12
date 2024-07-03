@@ -5,10 +5,11 @@ import {
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { useCreateNewUserMutation } from '../api/authApi';
 import { ROUTES } from '../utils/router';
 import { setUserData } from '../store/entities/authSlice';
-import { signupSchema } from '../utils/validationSchemas';
+import { getSignupSchema } from '../utils/validationSchemas';
 
 const Signup = () => {
   const [createNewUser] = useCreateNewUserMutation();
@@ -16,6 +17,10 @@ const Signup = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
+
+  const signupSchema = getSignupSchema(t);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setServerError('');
@@ -27,9 +32,9 @@ const Signup = () => {
       navigate(ROUTES.home);
     } catch (error) {
       if (error.status === 409) {
-        setServerError('Такой пользователь уже существует');
+        setServerError(t('error.existingUser'));
       } else {
-        console.error('Необработанная ошибка:', error);
+        console.error(error);
       }
     } finally {
       setSubmitting(false);
@@ -43,7 +48,7 @@ const Signup = () => {
           <div className="d-flex flex-column full-height">
             <nav className="shadow-sm navbar navbar-expand-lg bg-white">
               <div>
-                <a className="navbar-brand" href="/">Hexlet Chat</a>
+                <a className="navbar-brand" href="/">{t('login.navBrand')}</a>
               </div>
             </nav>
             <div className="container-fluid full-height">
@@ -65,7 +70,7 @@ const Signup = () => {
                       >
                         {({ isSubmitting, errors }) => (
                           <Form className="w-50">
-                            <h1 className="text-center mb-4">Регистрация</h1>
+                            <h1 className="text-center mb-4">{t('signup.registration')}</h1>
                             <div className="form-floating mb-3">
                               <Field
                                 placeholder="От 3 до 20 символов"
@@ -75,13 +80,13 @@ const Signup = () => {
                                 id="username"
                                 className={classNames('form-control', { 'is-invalid': errors.username || serverError })}
                               />
-                              <label className="form-label" htmlFor="username">Имя пользователя</label>
+                              <label className="form-label" htmlFor="username">{t('signup.username')}</label>
                               {serverError && <div className="invalid-tooltip">{serverError}</div>}
                               <ErrorMessage name="username" component="div" className="invalid-tooltip" />
                             </div>
                             <div className="form-floating mb-3">
                               <Field
-                                placeholder="Не менее 6 символов"
+                                placeholder={t('error.min6')}
                                 name="password"
                                 aria-describedby="passwordHelpBlock"
                                 required
@@ -90,12 +95,12 @@ const Signup = () => {
                                 id="password"
                                 className={classNames('form-control', { 'is-invalid': errors.password })}
                               />
-                              <label className="form-label" htmlFor="password">Пароль</label>
+                              <label className="form-label" htmlFor="password">{t('login.password')}</label>
                               <ErrorMessage name="password" component="div" className="invalid-tooltip" />
                             </div>
                             <div className="form-floating mb-4">
                               <Field
-                                placeholder="Пароли должны совпадать"
+                                placeholder={t('error.samePassword')}
                                 name="confirmPassword"
                                 required
                                 autoComplete="new-password"
@@ -103,11 +108,11 @@ const Signup = () => {
                                 id="confirmPassword"
                                 className={classNames('form-control', { 'is-invalid': errors.confirmPassword })}
                               />
-                              <label className="form-label" htmlFor="confirmPassword">Подтвердите пароль</label>
+                              <label className="form-label" htmlFor="confirmPassword">{t('signup.confirmPassword')}</label>
                               <ErrorMessage name="confirmPassword" component="div" className="invalid-tooltip" />
                             </div>
                             <button type="submit" className="w-100 btn btn-outline-primary" disabled={isSubmitting}>
-                              Зарегистрироваться
+                              {t('signup.signup')}
                             </button>
                           </Form>
                         )}

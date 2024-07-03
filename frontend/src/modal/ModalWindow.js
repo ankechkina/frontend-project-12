@@ -3,11 +3,12 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { Formik, Field, ErrorMessage } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { useAddChannelMutation, useEditChannelMutation, useRemoveChannelMutation } from '../api/channelsApi';
 import {
   addNewChannel, setChannelsError, setCurrentChannel, changeChannelName, removeChannel, defaultChannelId,
 } from '../store/entities/channelsSlice';
-import { channelNameSchema } from '../utils/validationSchemas';
+import { getChannelNameSchema } from '../utils/validationSchemas';
 
 const ModalWindow = ({
   show, handleClose, modalType, modalProps,
@@ -19,6 +20,10 @@ const ModalWindow = ({
   const [removeChannelApi] = useRemoveChannelMutation();
 
   const { channels } = useSelector((state) => state.channels);
+
+  const { t } = useTranslation();
+
+  const channelNameSchema = getChannelNameSchema(t, channels);
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
@@ -59,13 +64,13 @@ const ModalWindow = ({
       return (
         <Formik
           initialValues={{ name: '' }}
-          validationSchema={channelNameSchema(channels)}
+          validationSchema={channelNameSchema}
           onSubmit={handleFormSubmit}
         >
           {({ handleSubmit, isSubmitting, errors }) => (
             <Form onSubmit={handleSubmit}>
               <Form.Group controlId="name">
-                <label htmlFor="name" className="form-label visually-hidden">Имя канала</label>
+                <label htmlFor="name" className="form-label visually-hidden">{t('channels.channelName')}</label>
                 <Field
                   name="name"
                   type="text"
@@ -75,8 +80,8 @@ const ModalWindow = ({
                 <ErrorMessage name="name" component="div" className="invalid-tooltip" />
               </Form.Group>
               <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>Отменить</Button>
-                <Button type="submit" variant="primary" disabled={isSubmitting}>Отправить</Button>
+                <Button variant="secondary" onClick={handleClose}>{t('modal.cancel')}</Button>
+                <Button type="submit" variant="primary" disabled={isSubmitting}>{t('channels.send')}</Button>
               </Modal.Footer>
             </Form>
           )}
@@ -87,10 +92,10 @@ const ModalWindow = ({
     if (modalType === 'removing') {
       return (
         <>
-          <p>Уверены?</p>
+          <p>{t('modal.confirmDeletion')}</p>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>Отменить</Button>
-            <Button onClick={handleRemove} className="btn btn-danger">Удалить</Button>
+            <Button variant="secondary" onClick={handleClose}>{t('modal.cancel')}</Button>
+            <Button onClick={handleRemove} className="btn btn-danger">{t('channels.delete')}</Button>
           </Modal.Footer>
         </>
       );
@@ -99,9 +104,9 @@ const ModalWindow = ({
   };
 
   const getTitle = () => {
-    if (modalType === 'adding') return 'Добавить канал';
-    if (modalType === 'renaming') return 'Переименовать канал';
-    if (modalType === 'removing') return 'Удалить канал';
+    if (modalType === 'adding') return t('modal.addChannel');
+    if (modalType === 'renaming') return t('modal.renameChannel');
+    if (modalType === 'removing') return t('modal.deleteChannel');
     return '';
   };
 
