@@ -15,6 +15,7 @@ import { useGetChannelsQuery } from '../api/channelsApi';
 import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
 import ModalWindow from '../modal/ModalWindow';
 import { useToast } from '../context/ToastContext';
+import useFilter from '../utils/useFilter';
 
 const Home = () => {
   const { token, username } = useSelector((state) => state.user);
@@ -51,6 +52,8 @@ const HomeContent = ({
   const navigate = useNavigate();
 
   const toast = useToast();
+
+  const filter = useFilter();
 
   const messageRef = useRef(null);
 
@@ -240,7 +243,7 @@ const HomeContent = ({
                         <b>{message.username}</b>
                         :
                         {' '}
-                        {message.body}
+                        {filter.clean(message.body)}
                       </div>
                     ))}
                   </div>
