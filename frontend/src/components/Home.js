@@ -6,6 +6,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { ToastContainer } from 'react-toastify';
 import { logOut } from '../store/entities/authSlice';
 import { setCurrentChannel, setFetchedChannels, setChannelsError } from '../store/entities/channelsSlice';
 import { setMessages, setMessagesError } from '../store/entities/messagesSlice';
@@ -13,6 +14,7 @@ import { API_ROUTES } from '../utils/router';
 import { useGetChannelsQuery } from '../api/channelsApi';
 import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
 import ModalWindow from '../modal/ModalWindow';
+import { useToast } from '../context/ToastContext';
 
 const Home = () => {
   const { token, username } = useSelector((state) => state.user);
@@ -25,8 +27,10 @@ const Home = () => {
     console.log(currentState);
   }, [currentState]);
 
+  const { t } = useTranslation();
+
   if (!token) {
-    return <div>Please log in</div>;
+    return <div>{t('login.pleaseLogin')}</div>;
   }
 
   return (
@@ -45,6 +49,8 @@ const HomeContent = ({
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const toast = useToast();
 
   const messageRef = useRef(null);
 
@@ -79,6 +85,7 @@ const HomeContent = ({
     } catch (error) {
       console.error(error);
       dispatch(setMessagesError(error.message));
+      toast.error(t('error.networkError'));
     } finally {
       setSubmitting(false);
     }
@@ -88,10 +95,11 @@ const HomeContent = ({
     if (channelsError) {
       console.error(channelsError);
       dispatch(setChannelsError(channelsError.message));
+      toast.error(t('error.networkError'));
     } else {
       dispatch(setChannelsError(null));
     }
-  }, [channelsError, dispatch]);
+  }, [channelsError, dispatch, t, toast]);
 
   useEffect(() => {
     if (channelsData) {
@@ -103,10 +111,11 @@ const HomeContent = ({
     if (messagesError) {
       console.error(messagesError);
       dispatch(setMessagesError(messagesError.message));
+      toast.error(t('error.networkError'));
     } else {
       dispatch(setMessagesError(null));
     }
-  }, [messagesError, dispatch]);
+  }, [messagesError, dispatch, t, toast]);
 
   useEffect(() => {
     if (messagesData) {
@@ -273,6 +282,7 @@ const HomeContent = ({
           </div>
         </div>
       </div>
+      <ToastContainer />
       <ModalWindow
         show={!!modalInfo.type}
         handleClose={handleCloseModal}

@@ -6,6 +6,7 @@ export default {
       login: 'Войти',
       noAccount: 'Нет аккаунта? ',
       navBrand: 'Hexlet Chat',
+      pleaseLogin: 'Пожалуйста, войдите в аккаунт',
     },
     signup: {
       registration: 'Регистрация',
@@ -46,7 +47,7 @@ export default {
       min6: 'Не менее 6 символов',
       samePassword: 'Пароли должны совпадать',
       networkError: 'Ошибка соединения',
-      notFound: '404 - Страница не найдена :(',
+      notFound: 'Страница не найдена :(',
       existingUser: 'Такой пользователь уже существует',
       channelNotFound: 'Ошибка загрузки канала',
       requiredField: 'Обязательное поле',

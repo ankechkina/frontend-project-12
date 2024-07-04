@@ -9,11 +9,14 @@ import {
   addNewChannel, setChannelsError, setCurrentChannel, changeChannelName, removeChannel, defaultChannelId,
 } from '../store/entities/channelsSlice';
 import { getChannelNameSchema } from '../utils/validationSchemas';
+import { useToast } from '../context/ToastContext';
 
 const ModalWindow = ({
   show, handleClose, modalType, modalProps,
 }) => {
   const dispatch = useDispatch();
+
+  const toast = useToast();
 
   const [addChannel] = useAddChannelMutation();
   const [renameChannel] = useEditChannelMutation();
@@ -31,14 +34,17 @@ const ModalWindow = ({
         const response = await addChannel(values).unwrap();
         dispatch(addNewChannel(response));
         dispatch(setCurrentChannel(response.id));
+        toast.success(t('channels.channelCreated'));
       } else if (modalType === 'renaming') {
         const response = await renameChannel({ id: modalProps.channelId, newChannelName: { name: values.name } }).unwrap();
         dispatch(changeChannelName(response));
+        toast.success(t('channels.channelRenamed'));
       }
       handleClose();
       resetForm();
     } catch (err) {
       dispatch(setChannelsError(err));
+      toast.error(err.message);
     } finally {
       setSubmitting(false);
     }
@@ -54,8 +60,10 @@ const ModalWindow = ({
         dispatch(setCurrentChannel(defaultChannelId));
       }
       handleClose();
+      toast.success(t('channels.channelDeleted'));
     } catch (err) {
       dispatch(setChannelsError(err));
+      toast.error(err.message);
     }
   };
 

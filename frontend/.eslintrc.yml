@@ -41,4 +41,5 @@ rules:
   jsx-a11y/anchor-is-valid: off
   max-len: off
   import/prefer-default-export: off
+  react/jsx-no-constructed-context-values: off
   
