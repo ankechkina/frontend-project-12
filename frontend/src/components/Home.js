@@ -195,7 +195,7 @@ const HomeContent = ({
                           onClick={() => handleChannelClick(channel.id)}
                         >
                           <span className="me-1">#</span>
-                          {channel.name}
+                          {filter.clean(channel.name)}
                         </button>
                         {channel.removable && (
                         <>
@@ -232,7 +232,7 @@ const HomeContent = ({
                     <p className="m-0">
                       <b>
                         #
-                        {currentChannelName}
+                        {filter.clean(currentChannelName)}
                       </b>
                     </p>
                     <span className="text-muted">{`${t('channels.countMessages.messages', { count: filteredMessages.length })}`}</span>
