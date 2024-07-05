@@ -189,7 +189,7 @@ const HomeContent = ({
                         <button
                           type="button"
                           className={classNames(
-                            'w-100 rounded-0 text-start btn',
+                            'w-100 rounded-0 text-start text-truncate btn',
                             { 'btn-secondary': channel.id === currentChannelId },
                           )}
                           onClick={() => handleChannelClick(channel.id)}
