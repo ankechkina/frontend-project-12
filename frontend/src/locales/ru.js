@@ -7,6 +7,8 @@ export default {
       noAccount: 'Нет аккаунта? ',
       navBrand: 'Hexlet Chat',
       pleaseLogin: 'Пожалуйста, войдите в аккаунт',
+      pleaseReturn: 'Вы можете вернуться ',
+      mainPage: 'на главную страницу',
     },
     signup: {
       registration: 'Регистрация',
