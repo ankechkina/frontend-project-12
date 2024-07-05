@@ -10,6 +10,7 @@ import { useCreateNewUserMutation } from '../api/authApi';
 import { ROUTES } from '../utils/router';
 import { setUserData } from '../store/entities/authSlice';
 import { getSignupSchema } from '../utils/validationSchemas';
+import signupImage from '../assets/images/signup.jpg';
 
 const Signup = () => {
   const [createNewUser] = useCreateNewUserMutation();
@@ -56,7 +57,7 @@ const Signup = () => {
                 <div className="col-12 col-md-8 col-xxl-6">
                   <div className="card shadow-sm">
                     <div className="card-body d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
-                      <div>добавить картинку</div>
+                      <img src={signupImage} className="rounded-circle" alt={t('images.signup')} />
                       <Formik
                         initialValues={{
                           username: '',

@@ -53,5 +53,9 @@ export default {
       requiredField: 'Обязательное поле',
       uniqueChannelName: 'Должно быть уникальным',
     },
+    images: {
+      signup: 'Зарегистрироваться',
+      login: 'Войти',
+    },
   },
 };
