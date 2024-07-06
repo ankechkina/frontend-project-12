@@ -174,7 +174,7 @@ const HomeContent = ({
                     type="button"
                     className="btn btn-group-vertical p-0 text-primary"
                     id="add-channel-button"
-                    onClick={() => handleShowModal('adding')}
+                    onClick={() => handleShowModal('adding', { creatorName: username })}
                   >
                     <span>+</span>
                   </button>

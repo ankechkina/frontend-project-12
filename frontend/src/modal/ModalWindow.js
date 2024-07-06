@@ -24,6 +24,8 @@ const ModalWindow = ({
 
   const { channels } = useSelector((state) => state.channels);
 
+  const { username } = useSelector((state) => state.user);
+
   const { t } = useTranslation();
 
   const channelNameSchema = getChannelNameSchema(t, channels);
@@ -31,13 +33,20 @@ const ModalWindow = ({
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       if (modalType === 'adding') {
+        await addChannel(values).unwrap();
+
         const response = await addChannel(values).unwrap();
         dispatch(addNewChannel(response));
-        dispatch(setCurrentChannel(response.id));
+
+        if (modalProps.creatorName === username) {
+          console.log('имена равны');
+          dispatch(setCurrentChannel(response.id));
+        } else {
+          console.log('имена НЕ равны');
+        }
         toast.success(t('channels.channelCreated'));
       } else if (modalType === 'renaming') {
-        const response = await renameChannel({ id: modalProps.channelId, newChannelName: { name: values.name } }).unwrap();
-        dispatch(changeChannelName(response));
+        await renameChannel({ id: modalProps.channelId, newChannelName: { name: values.name } }).unwrap();
         toast.success(t('channels.channelRenamed'));
       }
       handleClose();
