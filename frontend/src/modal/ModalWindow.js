@@ -33,15 +33,7 @@ const ModalWindow = ({
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       if (modalType === 'adding') {
-        const response = await addChannel(values).unwrap();
-        dispatch(addNewChannel(response));
-
-        if (modalProps.creatorName === username) {
-          console.log('имена равны');
-          dispatch(setCurrentChannel(response.id));
-        } else {
-          console.log('имена НЕ равны');
-        }
+        await addChannel({ ...values, creatorName: modalProps.creatorName }).unwrap();
         toast.success(t('channels.channelCreated'));
       } else if (modalType === 'renaming') {
         await renameChannel({ id: modalProps.channelId, newChannelName: { name: values.name } }).unwrap();
