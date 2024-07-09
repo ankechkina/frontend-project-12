@@ -33,8 +33,6 @@ const ModalWindow = ({
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       if (modalType === 'adding') {
-        await addChannel(values).unwrap();
-
         const response = await addChannel(values).unwrap();
         dispatch(addNewChannel(response));
 
