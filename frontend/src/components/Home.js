@@ -8,8 +8,8 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { ToastContainer } from 'react-toastify';
 import { logOut } from '../store/entities/authSlice';
-import { setCurrentChannel, setFetchedChannels, setChannelsError } from '../store/entities/channelsSlice';
-import { setMessages, setMessagesError } from '../store/entities/messagesSlice';
+import { setCurrentChannel, setFetchedChannels } from '../store/entities/channelsSlice';
+import { setMessages } from '../store/entities/messagesSlice';
 import { API_ROUTES } from '../utils/router';
 import { useGetChannelsQuery } from '../api/channelsApi';
 import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
@@ -84,10 +84,8 @@ const HomeContent = ({
     try {
       await addMessage({ body: values.message, channelId: currentChannelId, username }).unwrap();
       resetForm();
-      dispatch(setMessagesError(null));
     } catch (error) {
       console.error(error);
-      dispatch(setMessagesError(error.message));
       toast.error(t('error.networkError'));
     } finally {
       setSubmitting(false);
@@ -97,12 +95,9 @@ const HomeContent = ({
   useEffect(() => {
     if (channelsError) {
       console.error(channelsError);
-      dispatch(setChannelsError(channelsError.message));
       toast.error(t('error.networkError'));
-    } else {
-      dispatch(setChannelsError(null));
     }
-  }, [channelsError, dispatch, t, toast]);
+  }, [channelsError, t, toast]);
 
   useEffect(() => {
     if (channelsData) {
@@ -113,12 +108,9 @@ const HomeContent = ({
   useEffect(() => {
     if (messagesError) {
       console.error(messagesError);
-      dispatch(setMessagesError(messagesError.message));
       toast.error(t('error.networkError'));
-    } else {
-      dispatch(setMessagesError(null));
     }
-  }, [messagesError, dispatch, t, toast]);
+  }, [messagesError, t, toast]);
 
   useEffect(() => {
     if (messagesData) {
@@ -216,8 +208,8 @@ const HomeContent = ({
                               { show: !!dropdownsOpen[channel.id] },
                             )}
                           >
-                            <a href="#" className="dropdown-item" onClick={() => { handleShowModal('renaming', { channelId: channel.id }); handleToggleDropdown(channel.id); }}>{t('channels.rename')}</a>
-                            <a href="#" className="dropdown-item" onClick={() => { handleShowModal('removing', { channelId: channel.id }); handleToggleDropdown(channel.id); }}>{t('channels.delete')}</a>
+                            <button type="button" className="dropdown-item" onClick={() => { handleShowModal('renaming', { channelId: channel.id }); handleToggleDropdown(channel.id); }}>{t('channels.rename')}</button>
+                            <button type="button" className="dropdown-item" onClick={() => { handleShowModal('removing', { channelId: channel.id }); handleToggleDropdown(channel.id); }}>{t('channels.delete')}</button>
                           </div>
                         </>
                         )}
@@ -253,7 +245,7 @@ const HomeContent = ({
                       onSubmit={handleSendMessage}
                     >
                       {({
-                        values, handleChange, handleSubmit, isSubmitting,
+                        handleSubmit, isSubmitting,
                       }) => (
                         <Form noValidate="" className="py-1 border rounded-2" onSubmit={handleSubmit}>
                           <div className="input-group has-validation">

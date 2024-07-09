@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { useAddChannelMutation, useEditChannelMutation, useRemoveChannelMutation } from '../api/channelsApi';
 import {
-  addNewChannel, setChannelsError, setCurrentChannel, changeChannelName, removeChannel, defaultChannelId,
+  setCurrentChannel, removeChannel, defaultChannelId,
 } from '../store/entities/channelsSlice';
 import { getChannelNameSchema } from '../utils/validationSchemas';
 import { useToast } from '../context/ToastContext';
@@ -24,11 +24,14 @@ const ModalWindow = ({
 
   const { channels } = useSelector((state) => state.channels);
 
-  const { username } = useSelector((state) => state.user);
-
   const { t } = useTranslation();
 
   const channelNameSchema = getChannelNameSchema(t, channels);
+
+  const handleRenameChannel = async (channelId, newChannelName) => {
+    await renameChannel({ id: channelId, newChannelName: { name: newChannelName } }).unwrap();
+    toast.success(t('channels.channelRenamed'));
+  };
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
@@ -36,13 +39,11 @@ const ModalWindow = ({
         await addChannel({ ...values, creatorName: modalProps.creatorName }).unwrap();
         toast.success(t('channels.channelCreated'));
       } else if (modalType === 'renaming') {
-        await renameChannel({ id: modalProps.channelId, newChannelName: { name: values.name } }).unwrap();
-        toast.success(t('channels.channelRenamed'));
+        await handleRenameChannel(modalProps.channelId, values.name);
       }
       handleClose();
       resetForm();
     } catch (err) {
-      dispatch(setChannelsError(err));
       toast.error(err.message);
     } finally {
       setSubmitting(false);
@@ -61,7 +62,6 @@ const ModalWindow = ({
       handleClose();
       toast.success(t('channels.channelDeleted'));
     } catch (err) {
-      dispatch(setChannelsError(err));
       toast.error(err.message);
     }
   };

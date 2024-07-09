@@ -1,5 +1,5 @@
 import React, {
-  createContext, useContext, useEffect, useState, useMemo, useCallback,
+  createContext, useContext, useEffect, useMemo, useCallback,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import socket from '../utils/socket';

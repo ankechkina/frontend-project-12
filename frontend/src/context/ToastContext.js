@@ -1,10 +1,10 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { toast, ToastContainer, Bounce } from 'react-toastify';
 
 const ToastContext = createContext();
 
 const ToastProvider = ({ children }) => {
-  const options = {
+  const options = useMemo(() => ({
     position: 'top-right',
     autoClose: 2000,
     hideProgressBar: false,
@@ -14,12 +14,12 @@ const ToastProvider = ({ children }) => {
     progress: undefined,
     theme: 'light',
     transition: Bounce,
-  };
+  }), []);
 
-  const showToast = {
+  const showToast = useMemo(() => ({
     success: (message) => toast.success(message, options),
     error: (message) => toast.error(message, options),
-  };
+  }), [options]);
 
   return (
     <ToastContext.Provider value={showToast}>
