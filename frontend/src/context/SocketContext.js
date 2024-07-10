@@ -2,13 +2,12 @@ import React, {
   createContext, useContext, useEffect, useMemo, useCallback,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import socket from '../utils/socket';
 import { addNewMessage } from '../store/entities/messagesSlice';
 import { addNewChannel, changeChannelName, setCurrentChannel } from '../store/entities/channelsSlice';
 
 const SocketContext = createContext();
 
-export const SocketProvider = ({ children }) => {
+export const SocketProvider = ({ children, socket }) => {
   const dispatch = useDispatch();
 
   const onMessage = useCallback((message) => {
@@ -38,14 +37,14 @@ export const SocketProvider = ({ children }) => {
       socket.off('newChannel', onNewChannel);
       socket.off('renameChannel', onRenameChannel);
     };
-  }, [onMessage, onNewChannel, onRenameChannel]);
+  }, [socket, onMessage, onNewChannel, onRenameChannel]);
 
   const contextValue = useMemo(() => ({
     socket,
     onMessage,
     onNewChannel,
     onRenameChannel,
-  }), [onMessage, onNewChannel, onRenameChannel]);
+  }), [socket, onMessage, onNewChannel, onRenameChannel]);
 
   return (
     <SocketContext.Provider value={contextValue}>
