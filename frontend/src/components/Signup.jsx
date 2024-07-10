@@ -11,6 +11,7 @@ import { ROUTES } from '../utils/router';
 import { setUserData } from '../store/entities/authSlice';
 import { getSignupSchema } from '../utils/validationSchemas';
 import signupImage from '../assets/images/signup.jpg';
+import useAuth from '../hooks/useAuth';
 
 const Signup = () => {
   const [createNewUser] = useCreateNewUserMutation();
@@ -18,6 +19,8 @@ const Signup = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { login } = useAuth(false);
 
   const { t } = useTranslation();
 
@@ -29,7 +32,7 @@ const Signup = () => {
       const response = await createNewUser(values).unwrap();
       const { token } = response;
       dispatch(setUserData(response));
-      localStorage.setItem('token', token);
+      login(token);
       navigate(ROUTES.home);
     } catch (error) {
       if (error.status === 409) {

@@ -9,15 +9,18 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLoginMutation } from '../api/authApi';
 import { setUserData } from '../store/entities/authSlice';
-import { ROUTES } from '../utils/router';
 import loginImage from '../assets/images/login.jpg';
+import useAuth from '../hooks/useAuth';
+import { ROUTES } from '../utils/router';
 
 const Login = () => {
-  const [login, { isLoading }] = useLoginMutation();
+  const [sendLoginData, { isLoading }] = useLoginMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [authError, setAuthError] = useState(false);
   const usernameRef = useRef(null);
+  const { login } = useAuth();
 
   const { t } = useTranslation();
 
@@ -27,10 +30,10 @@ const Login = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const user = await login(values).unwrap();
+      const user = await sendLoginData(values).unwrap();
       const { username } = values;
       dispatch(setUserData({ username, token: user.token }));
-      localStorage.setItem('token', user.token);
+      login(user.token);
       navigate(ROUTES.home);
     } catch (err) {
       setAuthError(true);

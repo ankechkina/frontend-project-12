@@ -1,21 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   Formik, Form, Field, ErrorMessage,
 } from 'formik';
-import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { ToastContainer } from 'react-toastify';
 import { logOut } from '../store/entities/authSlice';
 import { setCurrentChannel, setFetchedChannels } from '../store/entities/channelsSlice';
 import { setMessages } from '../store/entities/messagesSlice';
-import { API_ROUTES } from '../utils/router';
 import { useGetChannelsQuery } from '../api/channelsApi';
 import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
 import ModalWindow from '../modal/ModalWindow';
 import { useToast } from '../context/ToastContext';
 import useFilter from '../utils/useFilter';
+import useAuth from '../hooks/useAuth';
+import { ROUTES } from '../utils/router';
 
 const Home = () => {
   const { token, username } = useSelector((state) => state.user);
@@ -58,6 +59,8 @@ const HomeContent = ({
   const messageRef = useRef(null);
 
   const { t } = useTranslation();
+
+  const { logout } = useAuth();
 
   useEffect(() => {
     if (messageRef.current) {
@@ -119,8 +122,9 @@ const HomeContent = ({
   }, [messagesData, dispatch]);
 
   const handleLogout = () => {
+    logout();
     dispatch(logOut());
-    navigate(API_ROUTES.login);
+    navigate(ROUTES.login);
   };
 
   const handleChannelClick = (channelId) => {
