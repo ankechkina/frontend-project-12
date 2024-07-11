@@ -1,10 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import {
-  Formik, Form, Field, ErrorMessage,
-} from 'formik';
-import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { ToastContainer } from 'react-toastify';
 import { logOut } from '../store/entities/authSlice';
@@ -17,6 +13,8 @@ import { useToast } from '../context/ToastContext';
 import useFilter from '../utils/useFilter';
 import useAuth from '../hooks/useAuth';
 import { ROUTES } from '../utils/router';
+import ChatWindow from './ChatWindow';
+import ChannelList from './ChannelList';
 
 const Home = () => {
   const { token, username } = useSelector((state) => state.user);
@@ -163,120 +161,25 @@ const HomeContent = ({
           </nav>
           <div className="container h-100 my-4 overflow-hidden rounded shadow">
             <div className="row h-100 bg-white flex-md-row">
-              <div className="col-4 col-md-2 border-end px-0 bg-light d-flex flex-column h-100">
-                <div className="d-flex mt-1 justify-content-between mb-2 p-4 ps-4 pe-2">
-                  <b>{t('channels.channels')}</b>
-                  <button
-                    type="button"
-                    className="btn btn-group-vertical p-0 text-primary"
-                    id="add-channel-button"
-                    onClick={() => handleShowModal('adding', { creatorName: username })}
-                  >
-                    <span>+</span>
-                  </button>
-                </div>
-                <ul
-                  id="channels-box"
-                  className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
-                >
-                  {channels.map((channel) => (
-                    <li key={channel.id} className="nav-item w-100">
-                      <div role="group" className="d-flex dropdown btn-group">
-                        <button
-                          type="button"
-                          className={classNames(
-                            'w-100 rounded-0 text-start text-truncate btn',
-                            { 'btn-secondary': channel.id === currentChannelId },
-                          )}
-                          onClick={() => handleChannelClick(channel.id)}
-                        >
-                          <span className="me-1">#</span>
-                          {filter.clean(channel.name)}
-                        </button>
-                        {channel.removable && (
-                        <>
-                          <button
-                            type="button"
-                            aria-expanded={!!dropdownsOpen[channel.id]}
-                            className={classNames(
-                              'flex-grow-0 dropdown-toggle dropdown-toggle-split btn',
-                              { 'btn-secondary': channel.id === currentChannelId },
-                            )}
-                            onClick={() => handleToggleDropdown(channel.id)}
-                          >
-                            <span className="visually-hidden">{t('channels.channelControl')}</span>
-                          </button>
-                          <div
-                            className={classNames(
-                              'dropdown-menu',
-                              { show: !!dropdownsOpen[channel.id] },
-                            )}
-                          >
-                            <button type="button" className="dropdown-item" onClick={() => { handleShowModal('renaming', { channelId: channel.id }); handleToggleDropdown(channel.id); }}>{t('channels.rename')}</button>
-                            <button type="button" className="dropdown-item" onClick={() => { handleShowModal('removing', { channelId: channel.id }); handleToggleDropdown(channel.id); }}>{t('channels.delete')}</button>
-                          </div>
-                        </>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="col p-0 h-100">
-                <div className="d-flex flex-column h-100">
-                  <div className="bg-light mb-4 p-3 shadow-sm small">
-                    <p className="m-0">
-                      <b>
-                        #
-                        {filter.clean(currentChannelName)}
-                      </b>
-                    </p>
-                    <span className="text-muted">{`${t('channels.countMessages.messages', { count: filteredMessages.length })}`}</span>
-                  </div>
-                  <div id="messages-box" className="chat-messages overflow-auto px-5 ">
-                    {filteredMessages.map((message) => (
-                      <div key={message.id} className="text-break mb-2">
-                        <b>{message.username}</b>
-                        :
-                        {' '}
-                        {filter.clean(message.body)}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-auto px-5 py-3">
-                    <Formik
-                      initialValues={{ message: '' }}
-                      onSubmit={handleSendMessage}
-                    >
-                      {({
-                        handleSubmit, isSubmitting,
-                      }) => (
-                        <Form noValidate="" className="py-1 border rounded-2" onSubmit={handleSubmit}>
-                          <div className="input-group has-validation">
-                            <Field
-                              name="message"
-                              innerRef={messageRef}
-                              aria-label={t('channels.newMessage')}
-                              placeholder={t('channels.enterMessage')}
-                              className="border-0 p-0 ps-2 form-control"
-                            />
-                            <button
-                              type="submit"
-                              className="btn btn-group-vertical"
-                              disabled={isSubmitting}
-                            >
-                              {t('channels.send')}
-                            </button>
-                            <div className="invalid-feedback">
-                              <ErrorMessage name="body" />
-                            </div>
-                          </div>
-                        </Form>
-                      )}
-                    </Formik>
-                  </div>
-                </div>
-              </div>
+              <ChannelList
+                t={t}
+                handleShowModal={handleShowModal}
+                username="currentUsername"
+                channels={channels}
+                currentChannelId={currentChannelId}
+                handleChannelClick={handleChannelClick}
+                filter={filter}
+                dropdownsOpen={dropdownsOpen}
+                handleToggleDropdown={handleToggleDropdown}
+              />
+              <ChatWindow
+                filter={filter}
+                currentChannelName={currentChannelName}
+                filteredMessages={filteredMessages}
+                t={t}
+                handleSendMessage={handleSendMessage}
+                messageRef={messageRef}
+              />
             </div>
           </div>
         </div>
