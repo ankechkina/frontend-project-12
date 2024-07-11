@@ -18,36 +18,25 @@ import ChannelList from './ChannelList';
 import Navigation from './Navigation';
 
 const Home = () => {
-  const { token, username } = useSelector((state) => state.user);
-  const { channels, currentChannelId } = useSelector((state) => state.channels);
-  const { messages } = useSelector((state) => state.messages);
-
   const currentState = useSelector((state) => state);
-
   useEffect(() => {
     console.log(currentState);
   }, [currentState]);
 
-  const { t } = useTranslation();
-
-  if (!token) {
-    return <div>{t('login.pleaseLogin')}</div>;
-  }
+  const { isAuthenticated } = useAuth();
 
   return (
-    <HomeContent
-      token={token}
-      channels={channels}
-      currentChannelId={currentChannelId}
-      messages={messages}
-      username={username}
-    />
+    isAuthenticated && (
+      <HomeContent />
+    )
   );
 };
 
-const HomeContent = ({
-  channels, currentChannelId, messages, username,
-}) => {
+const HomeContent = () => {
+  const { username } = useSelector((state) => state.user);
+  const { channels, currentChannelId } = useSelector((state) => state.channels);
+  const { messages } = useSelector((state) => state.messages);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
