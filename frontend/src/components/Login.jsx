@@ -12,6 +12,7 @@ import { setUserData } from '../store/entities/authSlice';
 import loginImage from '../assets/images/login.jpg';
 import useAuth from '../hooks/useAuth';
 import { ROUTES } from '../utils/router';
+import Navigation from './Navigation';
 
 const Login = () => {
   const [sendLoginData, { isLoading }] = useLoginMutation();
@@ -43,11 +44,10 @@ const Login = () => {
 
   return (
     <>
-      <nav className="shadow-sm navbar navbar-expand-lg bg-white">
-        <div>
-          <a className="navbar-brand" href="/">{t('login.navBrand')}</a>
-        </div>
-      </nav>
+      <Navigation
+        t={t}
+        showLogoutButton={false}
+      />
       <div className="container-fluid full-height">
         <div className="login-container row justify-content-center align-content-center full-height">
           <div className="col-12 col-md-8 col-xxl-6">

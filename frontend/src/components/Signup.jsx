@@ -12,6 +12,7 @@ import { setUserData } from '../store/entities/authSlice';
 import { getSignupSchema } from '../utils/validationSchemas';
 import signupImage from '../assets/images/signup.jpg';
 import useAuth from '../hooks/useAuth';
+import Navigation from './Navigation';
 
 const Signup = () => {
   const [createNewUser] = useCreateNewUserMutation();
@@ -50,11 +51,10 @@ const Signup = () => {
       <div className="full-height">
         <div id="chat" className="full-height">
           <div className="d-flex flex-column full-height">
-            <nav className="shadow-sm navbar navbar-expand-lg bg-white">
-              <div>
-                <a className="navbar-brand" href="/">{t('login.navBrand')}</a>
-              </div>
-            </nav>
+            <Navigation
+              t={t}
+              showLogoutButton={false}
+            />
             <div className="container-fluid full-height">
               <div className="login-container row justify-content-center align-content-center full-height">
                 <div className="col-12 col-md-8 col-xxl-6">

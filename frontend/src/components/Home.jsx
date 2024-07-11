@@ -15,6 +15,7 @@ import useAuth from '../hooks/useAuth';
 import { ROUTES } from '../utils/router';
 import ChatWindow from './ChatWindow';
 import ChannelList from './ChannelList';
+import Navigation from './Navigation';
 
 const Home = () => {
   const { token, username } = useSelector((state) => state.user);
@@ -149,16 +150,11 @@ const HomeContent = ({
     <div className="h-100">
       <div id="chat" className="h-100">
         <div className="d-flex flex-column chat-page">
-          <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-            <a className="navbar-brand" href="/">{t('login.navBrand')}</a>
-            <button
-              onClick={handleLogout}
-              type="button"
-              className="btn btn-primary logout-button"
-            >
-              {t('channels.logout')}
-            </button>
-          </nav>
+          <Navigation
+            t={t}
+            handleLogout={handleLogout}
+            showLogoutButton
+          />
           <div className="container h-100 my-4 overflow-hidden rounded shadow">
             <div className="row h-100 bg-white flex-md-row">
               <ChannelList
