@@ -11,12 +11,11 @@ import {
 import { getChannelNameSchema } from '../utils/validationSchemas';
 import { useToast } from '../context/ToastContext';
 
-const ModalWindow = ({
-  show, handleClose, modalType, modalProps,
-}) => {
+const ModalWindow = ({ show, handleClose }) => {
   const dispatch = useDispatch();
-
   const toast = useToast();
+
+  const { modalWindowType, props } = useSelector((state) => state.modalWindow);
 
   const [addChannel] = useAddChannelMutation();
   const [renameChannel] = useEditChannelMutation();
@@ -35,11 +34,11 @@ const ModalWindow = ({
 
   const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
-      if (modalType === 'adding') {
-        await addChannel({ ...values, creatorName: modalProps.creatorName }).unwrap();
+      if (modalWindowType === 'adding') {
+        await addChannel({ ...values, creatorName: props.creatorName }).unwrap();
         toast.success(t('channels.channelCreated'));
-      } else if (modalType === 'renaming') {
-        await handleRenameChannel(modalProps.channelId, values.name);
+      } else if (modalWindowType === 'renaming') {
+        await handleRenameChannel(props.channelId, values.name);
       }
       handleClose();
       resetForm();
@@ -54,9 +53,9 @@ const ModalWindow = ({
 
   const handleRemove = async () => {
     try {
-      await removeChannelApi({ id: modalProps.channelId }).unwrap();
-      dispatch(removeChannel({ id: modalProps.channelId }));
-      if (modalProps.channelId === currentChannelId) {
+      await removeChannelApi({ id: props.channelId }).unwrap();
+      dispatch(removeChannel({ id: props.channelId }));
+      if (props.channelId === currentChannelId) {
         dispatch(setCurrentChannel(defaultChannelId));
       }
       handleClose();
@@ -67,7 +66,7 @@ const ModalWindow = ({
   };
 
   const renderContent = () => {
-    if (modalType === 'adding' || modalType === 'renaming') {
+    if (modalWindowType === 'adding' || modalWindowType === 'renaming') {
       return (
         <Formik
           initialValues={{ name: '' }}
@@ -96,7 +95,7 @@ const ModalWindow = ({
       );
     }
 
-    if (modalType === 'removing') {
+    if (modalWindowType === 'removing') {
       return (
         <>
           <p>{t('modal.confirmDeletion')}</p>
@@ -111,9 +110,9 @@ const ModalWindow = ({
   };
 
   const getTitle = () => {
-    if (modalType === 'adding') return t('modal.addChannel');
-    if (modalType === 'renaming') return t('modal.renameChannel');
-    if (modalType === 'removing') return t('modal.deleteChannel');
+    if (modalWindowType === 'adding') return t('modal.addChannel');
+    if (modalWindowType === 'renaming') return t('modal.renameChannel');
+    if (modalWindowType === 'removing') return t('modal.deleteChannel');
     return '';
   };
 

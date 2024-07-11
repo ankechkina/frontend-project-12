@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 const ChannelList = ({
   t,
-  handleShowModal,
+  handleOpenModal,
   username,
   channels,
   currentChannelId,
@@ -19,7 +19,7 @@ const ChannelList = ({
         type="button"
         className="btn btn-group-vertical p-0 text-primary"
         id="add-channel-button"
-        onClick={() => handleShowModal('adding', { creatorName: username })}
+        onClick={() => handleOpenModal('adding', { creatorName: username })}
       >
         <span>+</span>
       </button>
@@ -65,7 +65,7 @@ const ChannelList = ({
                     type="button"
                     className="dropdown-item"
                     onClick={() => {
-                      handleShowModal('renaming', { channelId: channel.id });
+                      handleOpenModal('renaming', { channelId: channel.id });
                       handleToggleDropdown(channel.id);
                     }}
                   >
@@ -75,7 +75,7 @@ const ChannelList = ({
                     type="button"
                     className="dropdown-item"
                     onClick={() => {
-                      handleShowModal('removing', { channelId: channel.id });
+                      handleOpenModal('removing', { channelId: channel.id });
                       handleToggleDropdown(channel.id);
                     }}
                   >

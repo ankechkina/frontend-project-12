@@ -3,7 +3,6 @@ import { removeChannel } from './channelsSlice';
 
 const initialState = {
   messages: [],
-  error: null,
 };
 
 const messagesSlice = createSlice({

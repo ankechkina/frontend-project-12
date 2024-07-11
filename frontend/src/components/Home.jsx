@@ -16,6 +16,7 @@ import { ROUTES } from '../utils/router';
 import ChatWindow from './ChatWindow';
 import ChannelList from './ChannelList';
 import Navigation from './Navigation';
+import { openModalWindow, closeModalWindow } from '../store/entities/modalSlice';
 
 const Home = () => {
   const currentState = useSelector((state) => state);
@@ -67,9 +68,15 @@ const HomeContent = () => {
 
   const [dropdownsOpen, setDropdownsOpen] = useState({});
 
-  const [modalInfo, setModalInfo] = useState({ type: null, props: {} });
-  const handleShowModal = (type, props = {}) => setModalInfo({ type, props });
-  const handleCloseModal = () => setModalInfo({ type: null, props: {} });
+  const isModalOpen = useSelector((state) => state.modalWindow.isOpen);
+
+  const handleOpenModal = (type, props) => {
+    dispatch(openModalWindow({ type, props }));
+  };
+
+  const handleCloseModal = () => {
+    dispatch(closeModalWindow());
+  };
 
   const handleSendMessage = async (values, { setSubmitting, resetForm }) => {
     try {
@@ -148,8 +155,8 @@ const HomeContent = () => {
             <div className="row h-100 bg-white flex-md-row">
               <ChannelList
                 t={t}
-                handleShowModal={handleShowModal}
-                username="currentUsername"
+                handleOpenModal={handleOpenModal}
+                username={username}
                 channels={channels}
                 currentChannelId={currentChannelId}
                 handleChannelClick={handleChannelClick}
@@ -171,10 +178,8 @@ const HomeContent = () => {
       </div>
       <ToastContainer />
       <ModalWindow
-        show={!!modalInfo.type}
+        show={isModalOpen}
         handleClose={handleCloseModal}
-        modalType={modalInfo.type}
-        modalProps={modalInfo.props}
       />
     </div>
   );
