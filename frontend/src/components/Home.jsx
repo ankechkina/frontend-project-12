@@ -90,12 +90,22 @@ const HomeContent = () => {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    dispatch(logOut());
+    navigate(ROUTES.login);
+  };
+
   useEffect(() => {
     if (channelsError) {
-      console.error(channelsError);
-      toast.error(t('error.networkError'));
+      if (channelsError.status === 403) {
+        handleLogout();
+      } else {
+        console.error(channelsError);
+        toast.error(t('error.networkError'));
+      }
     }
-  }, [channelsError, t, toast]);
+  }, [channelsError, t, toast, handleLogout]);
 
   useEffect(() => {
     if (channelsData) {
@@ -105,22 +115,20 @@ const HomeContent = () => {
 
   useEffect(() => {
     if (messagesError) {
-      console.error(messagesError);
-      toast.error(t('error.networkError'));
+      if (messagesError.status === 403) {
+        handleLogout();
+      } else {
+        console.error(messagesError);
+        toast.error(t('error.networkError'));
+      }
     }
-  }, [messagesError, t, toast]);
+  }, [messagesError, t, toast, handleLogout]);
 
   useEffect(() => {
     if (messagesData) {
       dispatch(setMessages(messagesData));
     }
   }, [messagesData, dispatch]);
-
-  const handleLogout = () => {
-    logout();
-    dispatch(logOut());
-    navigate(ROUTES.login);
-  };
 
   const handleChannelClick = (channelId) => {
     dispatch(setCurrentChannel(channelId));
