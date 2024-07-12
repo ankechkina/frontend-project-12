@@ -30,8 +30,7 @@ export const SocketProvider = ({ children, socket }) => {
   }, [dispatch]);
 
   const onRemoveChannel = useCallback((channel) => {
-    // console.log(channel);
-    // dispatch(removeChannel(channel));
+    dispatch(removeChannel(channel));
   }, [dispatch]);
 
   useEffect(() => {

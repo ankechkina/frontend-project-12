@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Modal, Button } from 'react-bootstrap';
 import { useRemoveChannelMutation } from '../../api/channelsApi';
 import { useToast } from '../../context/ToastContext';
-import { removeChannel, setCurrentChannel, defaultChannelId } from '../../store/entities/channelsSlice';
+import { setCurrentChannel, defaultChannelId } from '../../store/entities/channelsSlice';
 
 const Rename = ({ show, handleClose, props }) => {
   const { channelId } = props;
@@ -16,8 +16,7 @@ const Rename = ({ show, handleClose, props }) => {
 
   const handleRemove = async () => {
     try {
-      await removeChannelApi({ id: channelId }).unwrap();
-      dispatch(removeChannel({ id: channelId }));
+      await removeChannelApi(channelId).unwrap();
       if (channelId === currentChannelId) {
         dispatch(setCurrentChannel(defaultChannelId));
       }
