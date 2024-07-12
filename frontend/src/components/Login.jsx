@@ -13,6 +13,7 @@ import loginImage from '../assets/images/login.jpg';
 import useAuth from '../hooks/useAuth';
 import { ROUTES } from '../utils/router';
 import Navigation from './Navigation';
+import { useToast } from '../context/ToastContext';
 
 const Login = () => {
   const [sendLoginData, { isLoading }] = useLoginMutation();
@@ -24,6 +25,7 @@ const Login = () => {
   const { login } = useAuth();
 
   const { t } = useTranslation();
+  const toast = useToast();
 
   useEffect(() => {
     usernameRef.current.focus();
@@ -37,7 +39,12 @@ const Login = () => {
       login(user.token);
       navigate(ROUTES.home);
     } catch (err) {
-      setAuthError(true);
+      if (err.status === 401) {
+        setAuthError(true);
+      } else {
+        console.error(err);
+        toast.error(t('error.networkError'));
+      }
       setSubmitting(false);
     }
   };
