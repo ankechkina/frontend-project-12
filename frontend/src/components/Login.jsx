@@ -5,7 +5,7 @@ import {
 } from 'reactstrap';
 import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLoginMutation } from '../api/authApi';
 import { setUserData } from '../store/entities/authSlice';
@@ -109,7 +109,7 @@ const Login = () => {
                   </Formik>
                   <div className="p-4">
                     <span>{t('login.noAccount')}</span>
-                    <a href="/signup">{t('signup.registration')}</a>
+                    <Link to="/signup">{t('signup.registration')}</Link>
                   </div>
                 </div>
               </div>

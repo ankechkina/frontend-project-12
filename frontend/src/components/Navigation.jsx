@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Navigation = ({ t, handleLogout, showLogoutButton }) => (
   <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-    <a className="navbar-brand" href="/">{t('login.navBrand')}</a>
+    <Link className="navbar-brand" to="/">{t('login.navBrand')}</Link>
     {showLogoutButton && (
       <button
         onClick={handleLogout}

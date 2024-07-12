@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Navigation from './Navigation';
 
@@ -14,7 +15,7 @@ const NotFound = () => {
         <h1>{t('error.notFound')}</h1>
         <div className="p-4">
           <span>{t('login.pleaseReturn')}</span>
-          <a href="/">{t('login.mainPage')}</a>
+          <Link to="/">{t('login.mainPage')}</Link>
         </div>
       </div>
     </>
