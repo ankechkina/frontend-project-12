@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ToastContainer } from 'react-toastify';
 import { logOut } from '../store/entities/authSlice';
 import { setCurrentChannel, setFetchedChannels } from '../store/entities/channelsSlice';
 import { setMessages } from '../store/entities/messagesSlice';
@@ -184,7 +183,6 @@ const HomeContent = () => {
           </div>
         </div>
       </div>
-      <ToastContainer />
       <ModalWindow
         show={isModalOpen}
         handleClose={handleCloseModal}
