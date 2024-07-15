@@ -1,5 +1,10 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import classNames from 'classnames';
+import { useDispatch } from 'react-redux';
+import {
+  addNewChannel, changeChannelName, removeChannel, setCurrentChannel,
+} from '../store/entities/channelsSlice';
+import { useSocket } from '../context/SocketContext';
 
 const ChannelList = ({
   t,
@@ -11,84 +16,116 @@ const ChannelList = ({
   filter,
   dropdownsOpen,
   handleToggleDropdown,
-}) => (
-  <div className="col-4 col-md-2 border-end px-0 bg-light d-flex flex-column h-100">
-    <div className="d-flex mt-1 justify-content-between mb-2 p-4 ps-4 pe-2">
-      <b>{t('channels.channels')}</b>
-      <button
-        type="button"
-        className="btn btn-group-vertical p-0 text-primary"
-        id="add-channel-button"
-        onClick={() => handleOpenModal('adding', { creatorName: username })}
+}) => {
+  const dispatch = useDispatch();
+  const socket = useSocket();
+
+  const onNewChannel = useCallback((channel) => {
+    dispatch(addNewChannel(channel));
+    if (channel.creatorName === username) {
+      dispatch(setCurrentChannel(channel.id));
+    }
+  }, [dispatch, username]);
+
+  const onRenameChannel = useCallback((channel) => {
+    dispatch(changeChannelName(channel));
+  }, [dispatch]);
+
+  const onRemoveChannel = useCallback((channel) => {
+    dispatch(removeChannel(channel));
+  }, [dispatch]);
+
+  useEffect(() => {
+    socket.on('newChannel', onNewChannel);
+    socket.on('renameChannel', onRenameChannel);
+    socket.on('removeChannel', onRemoveChannel);
+
+    return () => {
+      socket.off('newChannel', onNewChannel);
+      socket.off('renameChannel', onRenameChannel);
+      socket.off('removeChannel', onRemoveChannel);
+    };
+  }, [socket, onNewChannel, onRenameChannel, onRemoveChannel]);
+
+  return (
+    <div className="col-4 col-md-2 border-end px-0 bg-light d-flex flex-column h-100">
+      <div className="d-flex mt-1 justify-content-between mb-2 p-4 ps-4 pe-2">
+        <b>{t('channels.channels')}</b>
+        <button
+          type="button"
+          className="btn btn-group-vertical p-0 text-primary"
+          id="add-channel-button"
+          onClick={() => handleOpenModal('adding', { creatorName: username })}
+        >
+          <span>+</span>
+        </button>
+      </div>
+      <ul
+        id="channels-box"
+        className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
       >
-        <span>+</span>
-      </button>
-    </div>
-    <ul
-      id="channels-box"
-      className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block"
-    >
-      {channels.map((channel) => (
-        <li key={channel.id} className="nav-item w-100">
-          <div role="group" className="d-flex dropdown btn-group">
-            <button
-              type="button"
-              className={classNames(
-                'w-100 rounded-0 text-start text-truncate btn',
-                { 'btn-secondary': channel.id === currentChannelId },
+        {channels.map((channel) => (
+          <li key={channel.id} className="nav-item w-100">
+            <div role="group" className="d-flex dropdown btn-group">
+              <button
+                type="button"
+                className={classNames(
+                  'w-100 rounded-0 text-start text-truncate btn',
+                  { 'btn-secondary': channel.id === currentChannelId },
+                )}
+                onClick={() => handleChannelClick(channel.id)}
+              >
+                <span className="me-1">#</span>
+                {filter.clean(channel.name)}
+              </button>
+              {channel.removable && (
+                <>
+                  <button
+                    type="button"
+                    aria-expanded={!!dropdownsOpen[channel.id]}
+                    className={classNames(
+                      'flex-grow-0 dropdown-toggle dropdown-toggle-split btn',
+                      { 'btn-secondary': channel.id === currentChannelId },
+                    )}
+                    onClick={() => handleToggleDropdown(channel.id)}
+                  >
+                    <span className="visually-hidden">{t('channels.channelControl')}</span>
+                  </button>
+                  <div
+                    className={classNames(
+                      'dropdown-menu',
+                      { show: !!dropdownsOpen[channel.id] },
+                    )}
+                  >
+                    <button
+                      type="button"
+                      className="dropdown-item"
+                      onClick={() => {
+                        handleOpenModal('renaming', { channelId: channel.id });
+                        handleToggleDropdown(channel.id);
+                      }}
+                    >
+                      {t('channels.rename')}
+                    </button>
+                    <button
+                      type="button"
+                      className="dropdown-item"
+                      onClick={() => {
+                        handleOpenModal('removing', { channelId: channel.id });
+                        handleToggleDropdown(channel.id);
+                      }}
+                    >
+                      {t('channels.delete')}
+                    </button>
+                  </div>
+                </>
               )}
-              onClick={() => handleChannelClick(channel.id)}
-            >
-              <span className="me-1">#</span>
-              {filter.clean(channel.name)}
-            </button>
-            {channel.removable && (
-              <>
-                <button
-                  type="button"
-                  aria-expanded={!!dropdownsOpen[channel.id]}
-                  className={classNames(
-                    'flex-grow-0 dropdown-toggle dropdown-toggle-split btn',
-                    { 'btn-secondary': channel.id === currentChannelId },
-                  )}
-                  onClick={() => handleToggleDropdown(channel.id)}
-                >
-                  <span className="visually-hidden">{t('channels.channelControl')}</span>
-                </button>
-                <div
-                  className={classNames(
-                    'dropdown-menu',
-                    { show: !!dropdownsOpen[channel.id] },
-                  )}
-                >
-                  <button
-                    type="button"
-                    className="dropdown-item"
-                    onClick={() => {
-                      handleOpenModal('renaming', { channelId: channel.id });
-                      handleToggleDropdown(channel.id);
-                    }}
-                  >
-                    {t('channels.rename')}
-                  </button>
-                  <button
-                    type="button"
-                    className="dropdown-item"
-                    onClick={() => {
-                      handleOpenModal('removing', { channelId: channel.id });
-                      handleToggleDropdown(channel.id);
-                    }}
-                  >
-                    {t('channels.delete')}
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
 export default ChannelList;
