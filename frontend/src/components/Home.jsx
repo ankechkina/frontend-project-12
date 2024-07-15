@@ -20,7 +20,6 @@ import { openModalWindow, closeModalWindow } from '../store/entities/modalSlice'
 
 const Home = () => {
   const { isAuthenticated } = useAuth();
-
   return (
     isAuthenticated && (
       <HomeContent />
