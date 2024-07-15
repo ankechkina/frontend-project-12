@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {
+  useEffect, useState, useRef, useCallback,
+} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -100,11 +102,11 @@ const HomeContent = () => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout();
     dispatch(logOut());
     navigate(ROUTES.login);
-  };
+  }, [logout, dispatch, navigate]);
 
   useEffect(() => {
     if (channelsError) {
