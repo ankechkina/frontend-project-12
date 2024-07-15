@@ -19,12 +19,8 @@ import Navigation from './Navigation';
 import { openModalWindow, closeModalWindow } from '../store/entities/modalSlice';
 
 const Home = () => {
-  const currentState = useSelector((state) => state);
-  useEffect(() => {
-    console.log(currentState);
-  }, [currentState]);
-
   const { isAuthenticated } = useAuth();
+
   return (
     isAuthenticated && (
       <HomeContent />
