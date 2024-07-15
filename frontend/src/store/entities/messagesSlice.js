@@ -9,10 +9,6 @@ const messagesSlice = createSlice({
   name: 'messages',
   initialState,
   reducers: {
-    setMessages: (state, action) => ({
-      ...state,
-      messages: action.payload,
-    }),
     addNewMessage: (state, action) => ({
       ...state,
       messages: [...state.messages, action.payload],
@@ -29,6 +25,6 @@ const messagesSlice = createSlice({
   },
 });
 
-export const { setMessages, addNewMessage } = messagesSlice.actions;
+export const { addNewMessage } = messagesSlice.actions;
 
 export default messagesSlice.reducer;
