@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { logOut } from '../store/entities/authSlice';
-import { setCurrentChannel } from '../store/entities/channelsSlice';
+import { setCurrentChannel, setFetchedChannels } from '../store/entities/channelsSlice';
+import { setMessages } from '../store/entities/messagesSlice';
 import { useGetChannelsQuery } from '../api/channelsApi';
 import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
 import ModalWindow from '../modal/ModalWindow';
@@ -17,6 +18,11 @@ import Navigation from './Navigation';
 import { openModalWindow, closeModalWindow } from '../store/entities/modalSlice';
 
 const Home = () => {
+  const currentState = useSelector((state) => state);
+  useEffect(() => {
+    console.log(currentState);
+  }, [currentState]);
+
   const { isAuthenticated } = useAuth();
   return (
     isAuthenticated && (
@@ -27,7 +33,8 @@ const Home = () => {
 
 const HomeContent = () => {
   const { username } = useSelector((state) => state.user);
-  const { currentChannelId } = useSelector((state) => state.channels);
+  const { channels, currentChannelId } = useSelector((state) => state.channels);
+  const { messages } = useSelector((state) => state.messages);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -56,6 +63,18 @@ const HomeContent = () => {
   const { data: messagesData, error: messagesError } = useGetMessagesQuery();
 
   const [addMessage] = useAddMessageMutation();
+
+  useEffect(() => {
+    if (channelsData) {
+      dispatch(setFetchedChannels(channelsData));
+    }
+  }, [channelsData, dispatch]);
+
+  useEffect(() => {
+    if (messagesData) {
+      dispatch(setMessages(messagesData));
+    }
+  }, [messagesData, dispatch]);
 
   const [dropdownsOpen, setDropdownsOpen] = useState({});
 
@@ -120,10 +139,10 @@ const HomeContent = () => {
     }));
   };
 
-  const currentChannel = channelsData?.find((channel) => channel.id === currentChannelId);
+  const currentChannel = channels.find((channel) => channel.id === currentChannelId);
   const currentChannelName = currentChannel ? currentChannel.name : t('error.channelNotFound');
 
-  const filteredMessages = (messagesData ?? []).filter((m) => m.channelId === currentChannelId);
+  const filteredMessages = messages.filter((message) => message.channelId === currentChannelId);
 
   if (isLoadingChannels) {
     return <div>{t('channels.loading')}</div>;
@@ -144,7 +163,7 @@ const HomeContent = () => {
                 t={t}
                 handleOpenModal={handleOpenModal}
                 username={username}
-                channels={channelsData}
+                channels={channels}
                 currentChannelId={currentChannelId}
                 handleChannelClick={handleChannelClick}
                 filter={filter}

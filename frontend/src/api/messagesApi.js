@@ -8,19 +8,9 @@ export const messagesApi = createApi({
     baseUrl: API_ROUTES.base,
     prepareHeaders,
   }),
-  tagTypes: ['Message'],
   endpoints: (builder) => ({
     getMessages: builder.query({
       query: () => '/messages',
-      providesTags: (result) => {
-        if (result) {
-          return [
-            ...result.map(({ id }) => ({ type: 'Message', id })),
-            { type: 'Message', id: 'LIST' },
-          ];
-        }
-        return [{ type: 'Message', id: 'LIST' }];
-      },
     }),
     addMessage: builder.mutation({
       query: (message) => ({
@@ -28,7 +18,6 @@ export const messagesApi = createApi({
         method: 'POST',
         body: message,
       }),
-      invalidatesTags: [{ type: 'Message', id: 'LIST' }],
     }),
   }),
 });
