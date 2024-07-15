@@ -2,19 +2,16 @@ import React, { useEffect, useCallback } from 'react';
 import {
   Formik, Form, Field, ErrorMessage,
 } from 'formik';
-import { useDispatch } from 'react-redux';
-import { addNewMessage } from '../store/entities/messagesSlice';
 import { useSocket } from '../context/SocketContext';
 
 const ChatWindow = ({
-  filter, currentChannelName, filteredMessages, t, handleSendMessage, messageRef,
+  filter, currentChannelName, filteredMessages, t, handleSendMessage, messageRef, refetchMessages,
 }) => {
-  const dispatch = useDispatch();
   const socket = useSocket();
 
-  const onMessage = useCallback((message) => {
-    dispatch(addNewMessage(message));
-  }, [dispatch]);
+  const onMessage = useCallback(() => {
+    refetchMessages();
+  }, [refetchMessages]);
 
   useEffect(() => {
     socket.on('newMessage', onMessage);

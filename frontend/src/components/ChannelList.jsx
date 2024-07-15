@@ -1,9 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
-import {
-  addNewChannel, changeChannelName, removeChannel, setCurrentChannel,
-} from '../store/entities/channelsSlice';
+import { setCurrentChannel } from '../store/entities/channelsSlice';
 import { useSocket } from '../context/SocketContext';
 
 const ChannelList = ({
@@ -16,24 +14,25 @@ const ChannelList = ({
   filter,
   dropdownsOpen,
   handleToggleDropdown,
+  refetchChannels,
 }) => {
   const dispatch = useDispatch();
   const socket = useSocket();
 
   const onNewChannel = useCallback((channel) => {
-    dispatch(addNewChannel(channel));
+    refetchChannels();
     if (channel.creatorName === username) {
       dispatch(setCurrentChannel(channel.id));
     }
-  }, [dispatch, username]);
+  }, [dispatch, username, refetchChannels]);
 
-  const onRenameChannel = useCallback((channel) => {
-    dispatch(changeChannelName(channel));
-  }, [dispatch]);
+  const onRenameChannel = useCallback(() => {
+    refetchChannels();
+  }, [refetchChannels]);
 
-  const onRemoveChannel = useCallback((channel) => {
-    dispatch(removeChannel(channel));
-  }, [dispatch]);
+  const onRemoveChannel = useCallback(() => {
+    refetchChannels();
+  }, [refetchChannels]);
 
   useEffect(() => {
     socket.on('newChannel', onNewChannel);

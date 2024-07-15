@@ -5,8 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { logOut } from '../store/entities/authSlice';
-import { setCurrentChannel, setFetchedChannels } from '../store/entities/channelsSlice';
-import { setMessages } from '../store/entities/messagesSlice';
+import { setCurrentChannel } from '../store/entities/channelsSlice';
 import { useGetChannelsQuery } from '../api/channelsApi';
 import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
 import ModalWindow from '../modal/ModalWindow';
@@ -35,8 +34,7 @@ const Home = () => {
 
 const HomeContent = () => {
   const { username } = useSelector((state) => state.user);
-  const { channels, currentChannelId } = useSelector((state) => state.channels);
-  const { messages } = useSelector((state) => state.messages);
+  const { currentChannelId } = useSelector((state) => state.channels);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -61,22 +59,14 @@ const HomeContent = () => {
     data: channelsData,
     error: channelsError,
     isLoading: isLoadingChannels,
+    refetch: refetchChannels,
   } = useGetChannelsQuery();
-  const { data: messagesData, error: messagesError } = useGetMessagesQuery();
+
+  const {
+    data: messagesData, error: messagesError, refetch: refetchMessages,
+  } = useGetMessagesQuery();
 
   const [addMessage] = useAddMessageMutation();
-
-  useEffect(() => {
-    if (channelsData) {
-      dispatch(setFetchedChannels(channelsData));
-    }
-  }, [channelsData, dispatch]);
-
-  useEffect(() => {
-    if (messagesData) {
-      dispatch(setMessages(messagesData));
-    }
-  }, [messagesData, dispatch]);
 
   const [dropdownsOpen, setDropdownsOpen] = useState({});
 
@@ -141,10 +131,10 @@ const HomeContent = () => {
     }));
   };
 
-  const currentChannel = channels.find((channel) => channel.id === currentChannelId);
+  const currentChannel = channelsData?.find((channel) => channel.id === currentChannelId);
   const currentChannelName = currentChannel ? currentChannel.name : t('error.channelNotFound');
 
-  const filteredMessages = messages.filter((message) => message.channelId === currentChannelId);
+  const filteredMessages = (messagesData ?? []).filter((m) => m.channelId === currentChannelId);
 
   if (isLoadingChannels) {
     return <div>{t('channels.loading')}</div>;
@@ -165,12 +155,13 @@ const HomeContent = () => {
                 t={t}
                 handleOpenModal={handleOpenModal}
                 username={username}
-                channels={channels}
+                channels={channelsData}
                 currentChannelId={currentChannelId}
                 handleChannelClick={handleChannelClick}
                 filter={filter}
                 dropdownsOpen={dropdownsOpen}
                 handleToggleDropdown={handleToggleDropdown}
+                refetchChannels={refetchChannels}
               />
               <ChatWindow
                 filter={filter}
@@ -179,6 +170,7 @@ const HomeContent = () => {
                 t={t}
                 handleSendMessage={handleSendMessage}
                 messageRef={messageRef}
+                refetchMessages={refetchMessages}
               />
             </div>
           </div>
