@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { useCreateNewUserMutation } from '../api/authApi';
 import { ROUTES } from '../utils/router';
-import { setUserData } from '../store/entities/authSlice';
+import { setUserData } from '../store/entities/userSlice';
 import { getSignupSchema } from '../utils/validationSchemas';
 import signupImage from '../assets/images/signup.jpg';
 import useAuth from '../hooks/useAuth';

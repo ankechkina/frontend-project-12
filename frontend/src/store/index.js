@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { authApi } from '../api/authApi';
-import authReducer from './entities/authSlice';
+import userReducer from './entities/userSlice';
 import channelsReducer from './entities/channelsSlice';
 import messagesReducer from './entities/messagesSlice';
 import { channelsApi } from '../api/channelsApi';
@@ -12,7 +12,7 @@ export default configureStore({
     [authApi.reducerPath]: authApi.reducer,
     [channelsApi.reducerPath]: channelsApi.reducer,
     [messagesApi.reducerPath]: messagesApi.reducer,
-    user: authReducer,
+    user: userReducer,
     channels: channelsReducer,
     messages: messagesReducer,
     modalWindow: modalReducer,

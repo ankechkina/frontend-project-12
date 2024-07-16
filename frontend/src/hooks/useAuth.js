@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setUserData } from '../store/entities/authSlice';
+import { setUserData } from '../store/entities/userSlice';
 import { ROUTES } from '../utils/router';
 
 const useAuth = (shouldRedirect = true) => {

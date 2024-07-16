@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLoginMutation } from '../api/authApi';
-import { setUserData } from '../store/entities/authSlice';
+import { setUserData } from '../store/entities/userSlice';
 import loginImage from '../assets/images/login.jpg';
 import useAuth from '../hooks/useAuth';
 import { ROUTES } from '../utils/router';

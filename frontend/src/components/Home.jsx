@@ -4,7 +4,7 @@ import React, {
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { logOut } from '../store/entities/authSlice';
+import { logOut } from '../store/entities/userSlice';
 import { setCurrentChannel } from '../store/entities/channelsSlice';
 import { useGetChannelsQuery } from '../api/channelsApi';
 import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
