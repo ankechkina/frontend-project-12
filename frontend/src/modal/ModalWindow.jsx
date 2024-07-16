@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import getModal from './modals/index';
 
 const renderModal = ({
-  modalWindowType, modalProps, show, handleClose,
+  modalWindowType, modalProps, show, handleClose, channels,
 }) => {
   const Component = getModal(modalWindowType);
 
@@ -11,10 +11,17 @@ const renderModal = ({
     return null;
   }
 
-  return <Component show={show} handleClose={handleClose} modalProps={modalProps} />;
+  return (
+    <Component
+      show={show}
+      handleClose={handleClose}
+      modalProps={modalProps}
+      channels={channels}
+    />
+  );
 };
 
-const ModalWindow = ({ show, handleClose }) => {
+const ModalWindow = ({ show, handleClose, channels }) => {
   const { modalWindowType, modalProps } = useSelector((state) => state.app);
 
   return (
@@ -24,6 +31,7 @@ const ModalWindow = ({ show, handleClose }) => {
         modalProps,
         show,
         handleClose,
+        channels,
       })}
     </>
   );

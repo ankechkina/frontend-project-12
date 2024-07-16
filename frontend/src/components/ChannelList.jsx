@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import classNames from 'classnames';
 import { useDispatch } from 'react-redux';
-import { setCurrentChannel } from '../store/entities/channelsSlice';
+import { setCurrentChannel } from '../store/entities/appSlice';
 import { useSocket } from '../context/SocketContext';
 
 const ChannelList = ({

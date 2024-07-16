@@ -1,16 +1,16 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { Formik, Field, ErrorMessage } from 'formik';
 import { useAddChannelMutation } from '../../api/channelsApi';
 import { getChannelNameSchema } from '../../utils/validationSchemas';
 import { useToast } from '../../context/ToastContext';
 
-const Add = ({ show, handleClose, modalProps }) => {
+const Add = ({
+  show, handleClose, modalProps, channels,
+}) => {
   const { creatorName } = modalProps;
   const [addChannel] = useAddChannelMutation();
-  const { channels } = useSelector((state) => state.channels);
   const { t } = useTranslation();
   const toast = useToast();
   const channelNameSchema = getChannelNameSchema(t, channels);

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { logOut } from '../store/entities/userSlice';
-import { setCurrentChannel } from '../store/entities/channelsSlice';
+import { setCurrentChannel, openModalWindow, closeModalWindow } from '../store/entities/appSlice';
 import { useGetChannelsQuery } from '../api/channelsApi';
 import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
 import ModalWindow from '../modal/ModalWindow';
@@ -16,7 +16,6 @@ import { ROUTES } from '../utils/router';
 import ChatWindow from './ChatWindow';
 import ChannelList from './ChannelList';
 import Navigation from './Navigation';
-import { openModalWindow, closeModalWindow } from '../store/entities/appSlice';
 
 const Home = () => {
   const { isAuthenticated } = useAuth();
@@ -30,7 +29,7 @@ const Home = () => {
 
 const HomeContent = () => {
   const { username } = useSelector((state) => state.user);
-  const { currentChannelId } = useSelector((state) => state.channels);
+  const { currentChannelId } = useSelector((state) => state.app);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -175,6 +174,7 @@ const HomeContent = () => {
       <ModalWindow
         show={isModalOpen}
         handleClose={handleCloseModal}
+        channels={channelsData}
       />
     </div>
   );

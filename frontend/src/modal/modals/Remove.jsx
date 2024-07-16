@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Modal, Button } from 'react-bootstrap';
 import { useRemoveChannelMutation } from '../../api/channelsApi';
 import { useToast } from '../../context/ToastContext';
-import { setCurrentChannel, defaultChannelId } from '../../store/entities/channelsSlice';
+import { setCurrentChannel, defaultChannelId } from '../../store/entities/appSlice';
 
 const Rename = ({ show, handleClose, modalProps }) => {
   const { channelId } = modalProps;
@@ -12,7 +12,7 @@ const Rename = ({ show, handleClose, modalProps }) => {
   const { t } = useTranslation();
   const toast = useToast();
   const dispatch = useDispatch();
-  const { currentChannelId } = useSelector((state) => state.channels);
+  const { currentChannelId } = useSelector((state) => state.app);
 
   const handleRemove = async () => {
     try {

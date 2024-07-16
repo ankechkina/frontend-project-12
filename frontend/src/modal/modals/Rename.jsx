@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { Formik, Field, ErrorMessage } from 'formik';
@@ -7,10 +6,11 @@ import { useEditChannelMutation } from '../../api/channelsApi';
 import { getChannelNameSchema } from '../../utils/validationSchemas';
 import { useToast } from '../../context/ToastContext';
 
-const Rename = ({ show, handleClose, modalProps }) => {
+const Rename = ({
+  show, handleClose, modalProps, channels,
+}) => {
   const { channelId } = modalProps;
   const [renameChannel] = useEditChannelMutation();
-  const { channels } = useSelector((state) => state.channels);
   const { t } = useTranslation();
   const toast = useToast();
   const channelNameSchema = getChannelNameSchema(t, channels);
