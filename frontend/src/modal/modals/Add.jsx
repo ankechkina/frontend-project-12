@@ -7,8 +7,8 @@ import { useAddChannelMutation } from '../../api/channelsApi';
 import { getChannelNameSchema } from '../../utils/validationSchemas';
 import { useToast } from '../../context/ToastContext';
 
-const Add = ({ show, handleClose, props }) => {
-  const { creatorName } = props;
+const Add = ({ show, handleClose, modalProps }) => {
+  const { creatorName } = modalProps;
   const [addChannel] = useAddChannelMutation();
   const { channels } = useSelector((state) => state.channels);
   const { t } = useTranslation();

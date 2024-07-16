@@ -5,7 +5,7 @@ import channelsReducer from './entities/channelsSlice';
 import messagesReducer from './entities/messagesSlice';
 import { channelsApi } from '../api/channelsApi';
 import { messagesApi } from '../api/messagesApi';
-import modalReducer from './entities/modalSlice';
+import appReducer from './entities/appSlice';
 
 export default configureStore({
   reducer: {
@@ -15,7 +15,7 @@ export default configureStore({
     user: userReducer,
     channels: channelsReducer,
     messages: messagesReducer,
-    modalWindow: modalReducer,
+    app: appReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(
     authApi.middleware,

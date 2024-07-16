@@ -3,25 +3,25 @@ import { useSelector } from 'react-redux';
 import getModal from './modals/index';
 
 const renderModal = ({
-  modalType, props, show, handleClose,
+  modalWindowType, modalProps, show, handleClose,
 }) => {
-  const Component = getModal(modalType);
+  const Component = getModal(modalWindowType);
 
   if (!Component) {
     return null;
   }
 
-  return <Component show={show} handleClose={handleClose} props={props} />;
+  return <Component show={show} handleClose={handleClose} modalProps={modalProps} />;
 };
 
 const ModalWindow = ({ show, handleClose }) => {
-  const { modalWindowType, props } = useSelector((state) => state.modalWindow);
+  const { modalWindowType, modalProps } = useSelector((state) => state.app);
 
   return (
     <>
       {renderModal({
-        modalType: modalWindowType,
-        props,
+        modalWindowType,
+        modalProps,
         show,
         handleClose,
       })}

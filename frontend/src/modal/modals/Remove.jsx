@@ -6,8 +6,8 @@ import { useRemoveChannelMutation } from '../../api/channelsApi';
 import { useToast } from '../../context/ToastContext';
 import { setCurrentChannel, defaultChannelId } from '../../store/entities/channelsSlice';
 
-const Rename = ({ show, handleClose, props }) => {
-  const { channelId } = props;
+const Rename = ({ show, handleClose, modalProps }) => {
+  const { channelId } = modalProps;
   const [removeChannelApi] = useRemoveChannelMutation();
   const { t } = useTranslation();
   const toast = useToast();

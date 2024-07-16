@@ -16,7 +16,7 @@ import { ROUTES } from '../utils/router';
 import ChatWindow from './ChatWindow';
 import ChannelList from './ChannelList';
 import Navigation from './Navigation';
-import { openModalWindow, closeModalWindow } from '../store/entities/modalSlice';
+import { openModalWindow, closeModalWindow } from '../store/entities/appSlice';
 
 const Home = () => {
   const { isAuthenticated } = useAuth();
@@ -66,7 +66,7 @@ const HomeContent = () => {
 
   const [dropdownsOpen, setDropdownsOpen] = useState({});
 
-  const isModalOpen = useSelector((state) => state.modalWindow.isOpen);
+  const isModalOpen = useSelector((state) => state.app.isModalOpen);
 
   const handleOpenModal = (type, props) => {
     dispatch(openModalWindow({ type, props }));

@@ -7,8 +7,8 @@ import { useEditChannelMutation } from '../../api/channelsApi';
 import { getChannelNameSchema } from '../../utils/validationSchemas';
 import { useToast } from '../../context/ToastContext';
 
-const Rename = ({ show, handleClose, props }) => {
-  const { channelId } = props;
+const Rename = ({ show, handleClose, modalProps }) => {
+  const { channelId } = modalProps;
   const [renameChannel] = useEditChannelMutation();
   const { channels } = useSelector((state) => state.channels);
   const { t } = useTranslation();
