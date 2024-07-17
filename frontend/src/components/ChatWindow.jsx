@@ -49,6 +49,14 @@ const ChatWindow = ({ handleLogout }) => {
     }
   };
 
+  const handleSubmitMessage = (values, { setSubmitting, resetForm }) => {
+    const trimmedMessage = values.message.trim();
+    if (trimmedMessage !== '') {
+      handleSendMessage(values, { setSubmitting, resetForm });
+    }
+    setSubmitting(false);
+  };
+
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -110,7 +118,7 @@ const ChatWindow = ({ handleLogout }) => {
         <div className="mt-auto px-5 py-3">
           <Formik
             initialValues={{ message: '' }}
-            onSubmit={handleSendMessage}
+            onSubmit={handleSubmitMessage}
           >
             {({ handleSubmit, isSubmitting }) => (
               <Form noValidate="" className="py-1 border rounded-2" onSubmit={handleSubmit}>
