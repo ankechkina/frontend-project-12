@@ -8,7 +8,6 @@ const NotFound = () => {
   return (
     <>
       <Navigation
-        t={t}
         showLogoutButton={false}
       />
       <div className="login-container">

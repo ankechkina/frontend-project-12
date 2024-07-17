@@ -52,7 +52,6 @@ const Signup = () => {
         <div id="chat" className="full-height">
           <div className="d-flex flex-column full-height">
             <Navigation
-              t={t}
               showLogoutButton={false}
             />
             <div className="container-fluid full-height">

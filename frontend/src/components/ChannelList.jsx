@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { Dropdown, ButtonGroup } from 'react-bootstrap';
 import { setCurrentChannel, openModalWindow } from '../store/entities/appSlice';
 import { useSocket } from '../context/SocketContext';
 import { useGetChannelsQuery } from '../api/channelsApi';
@@ -28,14 +29,15 @@ const ChannelList = ({ handleLogout }) => {
     refetch: refetchChannels,
   } = useGetChannelsQuery();
 
-  const [dropdownsOpen, setDropdownsOpen] = useState({});
-
-  const onNewChannel = useCallback((channel) => {
-    refetchChannels();
-    if (channel.creatorName === username) {
-      dispatch(setCurrentChannel(channel.id));
-    }
-  }, [dispatch, username, refetchChannels]);
+  const onNewChannel = useCallback(
+    (channel) => {
+      refetchChannels();
+      if (channel.creatorName === username) {
+        dispatch(setCurrentChannel(channel.id));
+      }
+    },
+    [dispatch, username, refetchChannels],
+  );
 
   const onRenameChannel = useCallback(() => {
     refetchChannels();
@@ -76,13 +78,6 @@ const ChannelList = ({ handleLogout }) => {
     dispatch(setCurrentChannel(channelId));
   };
 
-  const handleToggleDropdown = (channelId) => {
-    setDropdownsOpen((prevState) => ({
-      ...prevState,
-      [channelId]: !prevState[channelId],
-    }));
-  };
-
   return (
     <div className="col-4 col-md-2 border-end px-0 bg-light d-flex flex-column h-100">
       <div className="d-flex mt-1 justify-content-between mb-2 p-4 ps-4 pe-2">
@@ -115,46 +110,26 @@ const ChannelList = ({ handleLogout }) => {
                 {filter.clean(channel.name)}
               </button>
               {channel.removable && (
-                <>
-                  <button
-                    type="button"
-                    aria-expanded={!!dropdownsOpen[channel.id]}
-                    className={classNames(
-                      'flex-grow-0 dropdown-toggle dropdown-toggle-split btn',
-                      { 'btn-secondary': channel.id === currentChannelId },
-                    )}
-                    onClick={() => handleToggleDropdown(channel.id)}
+                <Dropdown as={ButtonGroup}>
+                  <Dropdown.Toggle
+                    split
+                    variant={channel.id === currentChannelId ? 'secondary' : 'light'}
                   >
                     <span className="visually-hidden">{t('channels.channelControl')}</span>
-                  </button>
-                  <div
-                    className={classNames(
-                      'dropdown-menu',
-                      { show: !!dropdownsOpen[channel.id] },
-                    )}
-                  >
-                    <button
-                      type="button"
-                      className="dropdown-item"
-                      onClick={() => {
-                        handleOpenModal('renaming', { channelId: channel.id });
-                        handleToggleDropdown(channel.id);
-                      }}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item
+                      onClick={() => handleOpenModal('renaming', { channelId: channel.id })}
                     >
                       {t('channels.rename')}
-                    </button>
-                    <button
-                      type="button"
-                      className="dropdown-item"
-                      onClick={() => {
-                        handleOpenModal('removing', { channelId: channel.id });
-                        handleToggleDropdown(channel.id);
-                      }}
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={() => handleOpenModal('removing', { channelId: channel.id })}
                     >
                       {t('channels.delete')}
-                    </button>
-                  </div>
-                </>
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
               )}
             </div>
           </li>

@@ -52,7 +52,6 @@ const Login = () => {
   return (
     <>
       <Navigation
-        t={t}
         showLogoutButton={false}
       />
       <div className="container-fluid full-height">
