@@ -12,7 +12,6 @@ import { channelsApi } from '../api/channelsApi';
 
 const ChatWindow = ({ handleLogout }) => {
   const socket = useSocket();
-  const messageRef = useRef(null);
   const { username } = useSelector((state) => state.user);
   const { currentChannelId } = useSelector((state) => state.app);
   const { t } = useTranslation();
@@ -50,11 +49,23 @@ const ChatWindow = ({ handleLogout }) => {
     }
   };
 
+  const inputRef = useRef(null);
+
   useEffect(() => {
-    if (messageRef.current) {
-      messageRef.current.focus();
+    if (inputRef.current) {
+      inputRef.current.focus();
     }
   }, []);
+
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [filteredMessages]);
 
   const onMessage = useCallback(() => {
     refetchMessages();
@@ -94,6 +105,7 @@ const ChatWindow = ({ handleLogout }) => {
               {filter.clean(message.body)}
             </div>
           ))}
+          <div ref={messagesEndRef} />
         </div>
         <div className="mt-auto px-5 py-3">
           <Formik
@@ -105,7 +117,7 @@ const ChatWindow = ({ handleLogout }) => {
                 <div className="input-group has-validation">
                   <Field
                     name="message"
-                    innerRef={messageRef}
+                    innerRef={inputRef}
                     aria-label={t('channels.newMessage')}
                     placeholder={t('channels.enterMessage')}
                     className="border-0 p-0 ps-2 form-control"
