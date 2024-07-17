@@ -1,13 +1,60 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import {
   Formik, Form, Field, ErrorMessage,
 } from 'formik';
+import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { useSocket } from '../context/SocketContext';
+import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
+import useFilter from '../hooks/useFilter';
+import { useToast } from '../context/ToastContext';
+import { channelsApi } from '../api/channelsApi';
 
-const ChatWindow = ({
-  filter, currentChannelName, filteredMessages, t, handleSendMessage, messageRef, refetchMessages,
-}) => {
+const ChatWindow = ({ handleLogout }) => {
   const socket = useSocket();
+  const messageRef = useRef(null);
+  const { username } = useSelector((state) => state.user);
+  const { currentChannelId } = useSelector((state) => state.app);
+  const { t } = useTranslation();
+  const filter = useFilter();
+  const toast = useToast();
+
+  const {
+    data: messagesData, error: messagesError, refetch: refetchMessages,
+  } = useGetMessagesQuery();
+
+  const filteredMessages = (messagesData ?? []).filter((m) => m.channelId === currentChannelId);
+
+  useEffect(() => {
+    if (messagesError) {
+      if (messagesError.status === 403) {
+        handleLogout();
+      } else {
+        console.error(messagesError);
+        toast.error(t('error.networkError'));
+      }
+    }
+  }, [messagesError, t, toast, handleLogout]);
+
+  const [addMessage] = useAddMessageMutation();
+
+  const handleSendMessage = async (values, { setSubmitting, resetForm }) => {
+    try {
+      await addMessage({ body: values.message, channelId: currentChannelId, username }).unwrap();
+      resetForm();
+    } catch (error) {
+      console.error(error);
+      toast.error(t('error.networkError'));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  useEffect(() => {
+    if (messageRef.current) {
+      messageRef.current.focus();
+    }
+  }, []);
 
   const onMessage = useCallback(() => {
     refetchMessages();
@@ -19,6 +66,10 @@ const ChatWindow = ({
       socket.off('newMessage', onMessage);
     };
   }, [socket, onMessage]);
+
+  const channels = useSelector((state) => channelsApi.endpoints.getChannels.select()(state)?.data);
+  const currentChannel = channels?.find((channel) => channel.id === currentChannelId);
+  const currentChannelName = currentChannel ? currentChannel.name : t('error.channelNotFound');
 
   return (
     <div className="col p-0 h-100">

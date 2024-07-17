@@ -28,4 +28,6 @@ const userSlice = createSlice({
 
 export const { setUserData, logOut } = userSlice.actions;
 
+export const selectIsAuthenticated = (state) => !!state.user.token;
+
 export default userSlice.reducer;

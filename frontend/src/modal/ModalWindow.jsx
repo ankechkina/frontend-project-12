@@ -1,39 +1,25 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import getModal from './modals/index';
+import { closeModalWindow } from '../store/entities/appSlice';
 
-const renderModal = ({
-  modalWindowType, modalProps, show, handleClose, channels,
-}) => {
+const ModalWindow = () => {
+  const { modalWindowType, modalProps } = useSelector((state) => state.app);
+  const isModalOpen = useSelector((state) => state.app.isModalOpen);
+  const dispatch = useDispatch();
+
+  const handleCloseModal = () => {
+    dispatch(closeModalWindow());
+  };
+
   const Component = getModal(modalWindowType);
 
-  if (!Component) {
-    return null;
-  }
-
-  return (
+  return Component && (
     <Component
-      show={show}
-      handleClose={handleClose}
+      show={isModalOpen}
+      handleClose={handleCloseModal}
       modalProps={modalProps}
-      channels={channels}
     />
-  );
-};
-
-const ModalWindow = ({ show, handleClose, channels }) => {
-  const { modalWindowType, modalProps } = useSelector((state) => state.app);
-
-  return (
-    <>
-      {renderModal({
-        modalWindowType,
-        modalProps,
-        show,
-        handleClose,
-        channels,
-      })}
-    </>
   );
 };
 

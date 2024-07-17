@@ -1,23 +1,34 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import classNames from 'classnames';
-import { useDispatch } from 'react-redux';
-import { setCurrentChannel } from '../store/entities/appSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { setCurrentChannel, openModalWindow } from '../store/entities/appSlice';
 import { useSocket } from '../context/SocketContext';
+import { useGetChannelsQuery } from '../api/channelsApi';
+import { useToast } from '../context/ToastContext';
+import useFilter from '../hooks/useFilter';
 
-const ChannelList = ({
-  t,
-  handleOpenModal,
-  username,
-  channels,
-  currentChannelId,
-  handleChannelClick,
-  filter,
-  dropdownsOpen,
-  handleToggleDropdown,
-  refetchChannels,
-}) => {
+const ChannelList = ({ handleLogout }) => {
   const dispatch = useDispatch();
   const socket = useSocket();
+  const { username } = useSelector((state) => state.user);
+  const { currentChannelId } = useSelector((state) => state.app);
+  const toast = useToast();
+  const { t } = useTranslation();
+  const filter = useFilter();
+
+  const handleOpenModal = (type, props) => {
+    dispatch(openModalWindow({ type, props }));
+  };
+
+  const {
+    data: channels,
+    error: channelsError,
+    isLoading: isLoadingChannels,
+    refetch: refetchChannels,
+  } = useGetChannelsQuery();
+
+  const [dropdownsOpen, setDropdownsOpen] = useState({});
 
   const onNewChannel = useCallback((channel) => {
     refetchChannels();
@@ -35,6 +46,17 @@ const ChannelList = ({
   }, [refetchChannels]);
 
   useEffect(() => {
+    if (channelsError) {
+      if (channelsError.status === 403) {
+        handleLogout();
+      } else {
+        console.error(channelsError);
+        toast.error(t('error.networkError'));
+      }
+    }
+  }, [channelsError, t, toast, handleLogout]);
+
+  useEffect(() => {
     socket.on('newChannel', onNewChannel);
     socket.on('renameChannel', onRenameChannel);
     socket.on('removeChannel', onRemoveChannel);
@@ -45,6 +67,21 @@ const ChannelList = ({
       socket.off('removeChannel', onRemoveChannel);
     };
   }, [socket, onNewChannel, onRenameChannel, onRemoveChannel]);
+
+  if (isLoadingChannels) {
+    return <div>{t('channels.loading')}</div>;
+  }
+
+  const handleChannelClick = (channelId) => {
+    dispatch(setCurrentChannel(channelId));
+  };
+
+  const handleToggleDropdown = (channelId) => {
+    setDropdownsOpen((prevState) => ({
+      ...prevState,
+      [channelId]: !prevState[channelId],
+    }));
+  };
 
   return (
     <div className="col-4 col-md-2 border-end px-0 bg-light d-flex flex-column h-100">

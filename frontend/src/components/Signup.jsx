@@ -21,7 +21,7 @@ const Signup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { login } = useAuth(false);
+  const { login } = useAuth();
 
   const { t } = useTranslation();
 
