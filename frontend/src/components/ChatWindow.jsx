@@ -2,10 +2,10 @@ import React, { useEffect, useCallback, useRef } from 'react';
 import {
   Formik, Form, Field, ErrorMessage,
 } from 'formik';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useSocket } from '../context/SocketContext';
-import { useGetMessagesQuery, useAddMessageMutation } from '../api/messagesApi';
+import { useGetMessagesQuery, useAddMessageMutation, messagesApi } from '../api/messagesApi';
 import useFilter from '../hooks/useFilter';
 import { useToast } from '../context/ToastContext';
 import { channelsApi } from '../api/channelsApi';
@@ -17,9 +17,11 @@ const ChatWindow = ({ handleLogout }) => {
   const { t } = useTranslation();
   const filter = useFilter();
   const toast = useToast();
+  const dispatch = useDispatch();
 
   const {
-    data: messagesData, error: messagesError, refetch: refetchMessages,
+    data: messagesData,
+    error: messagesError,
   } = useGetMessagesQuery();
 
   const filteredMessages = (messagesData ?? []).filter((m) => m.channelId === currentChannelId);
@@ -75,9 +77,13 @@ const ChatWindow = ({ handleLogout }) => {
     scrollToBottom();
   }, [filteredMessages]);
 
-  const onMessage = useCallback(() => {
-    refetchMessages();
-  }, [refetchMessages]);
+  const onMessage = useCallback((newMessage) => {
+    dispatch(
+      messagesApi.util.updateQueryData('getMessages', undefined, (draftMessages) => {
+        draftMessages.push(newMessage);
+      }),
+    );
+  }, [dispatch]);
 
   useEffect(() => {
     socket.on('newMessage', onMessage);

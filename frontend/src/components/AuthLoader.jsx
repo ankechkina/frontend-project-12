@@ -13,7 +13,7 @@ const AuthLoader = ({ children }) => {
     } else {
       setToken();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate, setToken]);
 
   return children;
 };

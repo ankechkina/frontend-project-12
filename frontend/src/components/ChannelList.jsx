@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Dropdown, ButtonGroup } from 'react-bootstrap';
 import { setCurrentChannel, openModalWindow } from '../store/entities/appSlice';
 import { useSocket } from '../context/SocketContext';
-import { useGetChannelsQuery } from '../api/channelsApi';
+import { useGetChannelsQuery, channelsApi } from '../api/channelsApi';
 import { useToast } from '../context/ToastContext';
 import useFilter from '../hooks/useFilter';
 
@@ -26,26 +26,49 @@ const ChannelList = ({ handleLogout }) => {
     data: channels,
     error: channelsError,
     isLoading: isLoadingChannels,
-    refetch: refetchChannels,
   } = useGetChannelsQuery();
 
   const onNewChannel = useCallback(
     (channel) => {
-      refetchChannels();
+      dispatch(
+        channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
+          draftChannels.push(channel);
+        }),
+      );
       if (channel.creatorName === username) {
         dispatch(setCurrentChannel(channel.id));
       }
     },
-    [dispatch, username, refetchChannels],
+    [dispatch, username],
   );
 
-  const onRenameChannel = useCallback(() => {
-    refetchChannels();
-  }, [refetchChannels]);
+  const onRenameChannel = useCallback(
+    (updatedChannel) => {
+      dispatch(
+        channelsApi.util.updateQueryData('getChannels', undefined, (originalChannels) => {
+          const draftChannels = [...originalChannels];
+          const index = draftChannels.findIndex((channel) => channel.id === updatedChannel.id);
+          if (index !== -1) {
+            draftChannels[index] = updatedChannel;
+          }
+          return draftChannels;
+        }),
+      );
+    },
+    [dispatch],
+  );
 
-  const onRemoveChannel = useCallback(() => {
-    refetchChannels();
-  }, [refetchChannels]);
+  const onRemoveChannel = useCallback(
+    (removedChannel) => {
+      const removedChannelId = removedChannel.id;
+      dispatch(
+        channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
+          return draftChannels.filter((channel) => channel.id !== removedChannelId);
+        }),
+      );
+    },
+    [dispatch],
+  );
 
   useEffect(() => {
     if (channelsError) {

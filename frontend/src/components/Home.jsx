@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import ModalWindow from '../modal/ModalWindow';
@@ -10,19 +10,7 @@ import { logOut } from '../store/entities/userSlice';
 import { ROUTES } from '../utils/router';
 
 const Home = () => {
-  /* const currentState = useSelector((state) => state);
-  useEffect(() => {
-    console.log(currentState);
-  }, [currentState]); */
-
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate(ROUTES.login);
-    }
-  }, [isAuthenticated]);
 
   return (
     isAuthenticated && (
