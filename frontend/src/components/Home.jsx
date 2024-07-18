@@ -11,7 +11,6 @@ import { ROUTES } from '../utils/router';
 
 const Home = () => {
   const { isAuthenticated } = useAuth();
-
   return (
     isAuthenticated && (
       <HomeContent />
