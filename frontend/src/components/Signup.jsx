@@ -76,7 +76,7 @@ const Signup = () => {
                             <h1 className="text-center mb-4">{t('signup.registration')}</h1>
                             <div className="form-floating mb-3">
                               <Field
-                                placeholder="От 3 до 20 символов"
+                                placeholder={t('error.min3max20')}
                                 name="username"
                                 autoComplete="username"
                                 required

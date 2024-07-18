@@ -60,9 +60,9 @@ const ChannelList = ({ handleLogout }) => {
 
   const onRemoveChannel = useCallback(
     (removedChannel) => {
-      const removedChannelId = removedChannel.id;
       dispatch(
         channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
+          const removedChannelId = removedChannel.id;
           return draftChannels.filter((channel) => channel.id !== removedChannelId);
         }),
       );

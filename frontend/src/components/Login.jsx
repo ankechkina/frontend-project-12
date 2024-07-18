@@ -108,7 +108,7 @@ const Login = () => {
                   </Formik>
                   <div className="p-4">
                     <span>{t('login.noAccount')}</span>
-                    <Link to="/signup">{t('signup.registration')}</Link>
+                    <Link to={ROUTES.signup}>{t('signup.registration')}</Link>
                   </div>
                 </div>
               </div>
