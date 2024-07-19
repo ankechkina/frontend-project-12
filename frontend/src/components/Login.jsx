@@ -16,7 +16,6 @@ import { useToast } from '../context/ToastContext';
 const Login = () => {
   const [sendLoginData, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
-
   const [authError, setAuthError] = useState(false);
   const usernameRef = useRef(null);
   const { login } = useAuth();
