@@ -1,33 +1,26 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import ModalWindow from '../modal/ModalWindow';
 import useAuth from '../hooks/useAuth';
 import ChatWindow from './ChatWindow';
 import ChannelList from './ChannelList';
 import Navigation from './Navigation';
-import { logOut } from '../store/entities/userSlice';
 import { ROUTES } from '../utils/router';
 
 const Home = () => {
-  const { isAuthenticated } = useAuth();
-  return (
-    isAuthenticated && (
-      <HomeContent />
-    )
-  );
-};
+  const currentState = useSelector((state) => state);
+  useEffect(() => {
+    console.log(currentState);
+  }, [currentState]);
 
-const HomeContent = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { logout } = useAuth();
 
   const handleLogout = useCallback(() => {
     logout();
-    dispatch(logOut());
     navigate(ROUTES.login);
-  }, [logout, dispatch, navigate]);
+  }, [logout, navigate]);
 
   return (
     <div className="h-100">

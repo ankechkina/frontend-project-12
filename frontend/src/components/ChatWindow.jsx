@@ -56,7 +56,6 @@ const ChatWindow = ({ handleLogout }) => {
     if (trimmedMessage !== '') {
       handleSendMessage(values, { setSubmitting, resetForm });
     }
-    setSubmitting(false);
   };
 
   const inputRef = useRef(null);

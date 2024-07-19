@@ -4,11 +4,9 @@ import {
   FormGroup, Label, Input, Button,
 } from 'reactstrap';
 import classNames from 'classnames';
-import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLoginMutation } from '../api/authApi';
-import { setUserData } from '../store/entities/userSlice';
 import loginImage from '../assets/images/login.jpg';
 import useAuth from '../hooks/useAuth';
 import { ROUTES } from '../utils/router';
@@ -17,7 +15,6 @@ import { useToast } from '../context/ToastContext';
 
 const Login = () => {
   const [sendLoginData, { isLoading }] = useLoginMutation();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [authError, setAuthError] = useState(false);
@@ -35,8 +32,7 @@ const Login = () => {
     try {
       const user = await sendLoginData(values).unwrap();
       const { username } = values;
-      dispatch(setUserData({ username, token: user.token }));
-      login(user.token);
+      login(user.token, username);
       navigate(ROUTES.home);
     } catch (err) {
       if (err.status === 401) {

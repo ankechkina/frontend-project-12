@@ -4,16 +4,18 @@ import useAuth from '../hooks/useAuth';
 import { ROUTES } from '../utils/router';
 
 const AuthLoader = ({ children }) => {
-  const { isAuthenticated, setToken } = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate(ROUTES.login);
-    } else {
-      setToken();
     }
-  }, [isAuthenticated, navigate, setToken]);
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return children;
 };
