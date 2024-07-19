@@ -43,8 +43,8 @@ export const channelsApi = createApi({
           await queryFulfilled;
           dispatch(
             messagesApi.util.updateQueryData('getMessages', undefined, (draftMessages) => {
-              const channelId = id;
-              return draftMessages.filter((message) => message.channelId !== channelId);
+              const restMessages = draftMessages.filter((message) => message.channelId !== id);
+              return restMessages;
             }),
           );
         } catch (error) {

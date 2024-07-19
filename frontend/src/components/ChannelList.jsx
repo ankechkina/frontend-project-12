@@ -64,14 +64,14 @@ const ChannelList = ({ handleLogout }) => {
     (removedChannel) => {
       dispatch(
         channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
-          const removedChannelId = removedChannel.id;
-          return draftChannels.filter((channel) => channel.id !== removedChannelId);
+          const restChannels = draftChannels.filter((channel) => channel.id !== removedChannel.id);
+          return restChannels;
         }),
       );
       dispatch(
         messagesApi.util.updateQueryData('getMessages', undefined, (draftMessages) => {
-          const removedChan = removedChannel.id;
-          return draftMessages.filter((message) => message.channelId !== removedChan);
+          const restMessages = draftMessages.filter((mes) => mes.channelId !== removedChannel.id);
+          return restMessages;
         }),
       );
     },

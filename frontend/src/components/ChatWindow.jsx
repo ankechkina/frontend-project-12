@@ -1,4 +1,6 @@
-import React, { useEffect, useCallback, useRef } from 'react';
+import React, {
+  useMemo, useEffect, useCallback, useRef,
+} from 'react';
 import {
   Formik, Form, Field, ErrorMessage,
 } from 'formik';
@@ -24,7 +26,10 @@ const ChatWindow = ({ handleLogout }) => {
     error: messagesError,
   } = useGetMessagesQuery();
 
-  const filteredMessages = messagesData?.filter((m) => m.channelId === currentChannelId) ?? [];
+  const filteredMessages = useMemo(() => {
+    const result = messagesData?.filter((m) => m.channelId === currentChannelId) ?? [];
+    return result;
+  }, [messagesData, currentChannelId]);
 
   const currentChannelName = useChannelName(currentChannelId);
 
