@@ -47,11 +47,11 @@ const ChannelList = ({ handleLogout }) => {
     (updatedChannel) => {
       dispatch(
         channelsApi.util.updateQueryData('getChannels', undefined, (originalChannels) => {
+          const foundChannel = originalChannels.find((channel) => channel.id === updatedChannel.id);
           const draftChannels = originalChannels.map((channel) => {
-            if (channel.id === updatedChannel.id) {
+            if (channel === foundChannel) {
               return { ...channel, ...updatedChannel };
-            }
-            return channel;
+            } return channel;
           });
           return draftChannels;
         }),

@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import {
   Formik, Form, Field, ErrorMessage,
 } from 'formik';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import { useCreateNewUserMutation } from '../api/authApi';
 import { ROUTES } from '../utils/router';
-import { setUserData } from '../store/entities/userSlice';
 import { getSignupSchema } from '../utils/validationSchemas';
 import signupImage from '../assets/images/signup.jpg';
 import useAuth from '../hooks/useAuth';
@@ -18,7 +16,6 @@ const Signup = () => {
   const [createNewUser] = useCreateNewUserMutation();
   const [serverError, setServerError] = useState('');
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { login } = useAuth();
@@ -31,9 +28,8 @@ const Signup = () => {
     setServerError('');
     try {
       const response = await createNewUser(values).unwrap();
-      const { token } = response;
-      dispatch(setUserData(response));
-      login(token);
+      const { token, username } = response;
+      login(token, username);
       navigate(ROUTES.home);
     } catch (error) {
       if (error.status === 409) {

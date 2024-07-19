@@ -8,7 +8,7 @@ import { useSocket } from '../context/SocketContext';
 import { useGetMessagesQuery, useAddMessageMutation, messagesApi } from '../api/messagesApi';
 import useFilter from '../hooks/useFilter';
 import { useToast } from '../context/ToastContext';
-import { channelsApi } from '../api/channelsApi';
+import useChannelName from '../hooks/useChannelName';
 
 const ChatWindow = ({ handleLogout }) => {
   const socket = useSocket();
@@ -25,6 +25,8 @@ const ChatWindow = ({ handleLogout }) => {
   } = useGetMessagesQuery();
 
   const filteredMessages = messagesData?.filter((m) => m.channelId === currentChannelId) ?? [];
+
+  const currentChannelName = useChannelName(currentChannelId);
 
   useEffect(() => {
     if (messagesError) {
@@ -92,10 +94,6 @@ const ChatWindow = ({ handleLogout }) => {
       socket.off('newMessage', onMessage);
     };
   }, [socket, onMessage]);
-
-  const channels = useSelector((state) => channelsApi.endpoints.getChannels.select()(state)?.data);
-  const currentChannel = channels?.find((channel) => channel.id === currentChannelId);
-  const currentChannelName = currentChannel ? currentChannel.name : t('error.channelNotFound');
 
   return (
     <div className="col p-0 h-100">

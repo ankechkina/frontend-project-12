@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { Modal, Button, Form } from 'react-bootstrap';
@@ -6,6 +6,7 @@ import { Formik, Field, ErrorMessage } from 'formik';
 import { useEditChannelMutation, channelsApi } from '../../api/channelsApi';
 import { getChannelNameSchema } from '../../utils/validationSchemas';
 import { useToast } from '../../context/ToastContext';
+import useChannelName from '../../hooks/useChannelName';
 
 const Rename = ({
   show, handleClose, modalProps,
@@ -14,6 +15,16 @@ const Rename = ({
   const [renameChannel] = useEditChannelMutation();
   const { t } = useTranslation();
   const toast = useToast();
+
+  const previousChannelName = useChannelName(channelId);
+
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   const channels = useSelector((state) => channelsApi.endpoints.getChannels.select()(state)?.data);
   const channelNameSchema = getChannelNameSchema(t, channels);
@@ -43,7 +54,7 @@ const Rename = ({
       </Modal.Header>
       <Modal.Body>
         <Formik
-          initialValues={{ name: '' }}
+          initialValues={{ name: previousChannelName || '' }}
           validationSchema={channelNameSchema}
           onSubmit={handleFormSubmit}
         >
@@ -56,8 +67,10 @@ const Rename = ({
                 <Field
                   name="name"
                   type="text"
+                  innerRef={inputRef}
                   className={`form-control ${errors.name ? 'is-invalid' : ''}`}
                   id="name"
+                  autoComplete="off"
                 />
                 <ErrorMessage name="name" component="div" className="invalid-tooltip" />
               </Form.Group>

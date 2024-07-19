@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ModalWindow from '../modal/ModalWindow';
 import useAuth from '../hooks/useAuth';
@@ -9,11 +8,6 @@ import Navigation from './Navigation';
 import { ROUTES } from '../utils/router';
 
 const Home = () => {
-  const currentState = useSelector((state) => state);
-  useEffect(() => {
-    console.log(currentState);
-  }, [currentState]);
-
   const navigate = useNavigate();
   const { logout } = useAuth();
 
