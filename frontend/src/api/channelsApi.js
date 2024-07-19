@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_ROUTES } from '../utils/router';
 import prepareHeaders from '../utils/prepareHeaders';
+import { messagesApi } from './messagesApi';
 
 export const channelsApi = createApi({
   reducerPath: 'channelsApi',
@@ -37,6 +38,19 @@ export const channelsApi = createApi({
         url: `/channels/${id}`,
         method: 'DELETE',
       }),
+      async onQueryStarted(id, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            messagesApi.util.updateQueryData('getMessages', undefined, (draftMessages) => {
+              const channelId = id;
+              return draftMessages.filter((message) => message.channelId !== channelId);
+            }),
+          );
+        } catch (error) {
+          console.error(error);
+        }
+      },
       invalidatesTags: (result, error, id) => [{ type: 'Channel', id }],
     }),
   }),

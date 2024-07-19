@@ -24,7 +24,7 @@ const ChatWindow = ({ handleLogout }) => {
     error: messagesError,
   } = useGetMessagesQuery();
 
-  const filteredMessages = (messagesData ?? []).filter((m) => m.channelId === currentChannelId);
+  const filteredMessages = messagesData?.filter((m) => m.channelId === currentChannelId) ?? [];
 
   useEffect(() => {
     if (messagesError) {
@@ -55,6 +55,8 @@ const ChatWindow = ({ handleLogout }) => {
     const trimmedMessage = values.message.trim();
     if (trimmedMessage !== '') {
       handleSendMessage(values, { setSubmitting, resetForm });
+    } else {
+      setSubmitting(false);
     }
   };
 

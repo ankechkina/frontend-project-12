@@ -6,6 +6,7 @@ import { Dropdown, ButtonGroup } from 'react-bootstrap';
 import { setCurrentChannel, openModalWindow } from '../store/entities/appSlice';
 import { useSocket } from '../context/SocketContext';
 import { useGetChannelsQuery, channelsApi } from '../api/channelsApi';
+import { messagesApi } from '../api/messagesApi';
 import { useToast } from '../context/ToastContext';
 import useFilter from '../hooks/useFilter';
 
@@ -46,11 +47,12 @@ const ChannelList = ({ handleLogout }) => {
     (updatedChannel) => {
       dispatch(
         channelsApi.util.updateQueryData('getChannels', undefined, (originalChannels) => {
-          const draftChannels = [...originalChannels];
-          const index = draftChannels.findIndex((channel) => channel.id === updatedChannel.id);
-          if (index !== -1) {
-            draftChannels[index] = updatedChannel;
-          }
+          const draftChannels = originalChannels.map((channel) => {
+            if (channel.id === updatedChannel.id) {
+              return { ...channel, ...updatedChannel };
+            }
+            return channel;
+          });
           return draftChannels;
         }),
       );
@@ -64,6 +66,12 @@ const ChannelList = ({ handleLogout }) => {
         channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
           const removedChannelId = removedChannel.id;
           return draftChannels.filter((channel) => channel.id !== removedChannelId);
+        }),
+      );
+      dispatch(
+        messagesApi.util.updateQueryData('getMessages', undefined, (draftMessages) => {
+          const removedChan = removedChannel.id;
+          return draftMessages.filter((message) => message.channelId !== removedChan);
         }),
       );
     },
